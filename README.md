@@ -1,6 +1,4 @@
-
-
-<center><h1><a href="https://mercuryt.mercury-training.com" target="_blank"><img src="assets/images/logo-icon.png" width="100" alt="Sawtruboost Logo">course-factory</a></h1></center>
+<h1 align="center"><a href="https://mercuryt.mercury-training.com" target="_blank"><img src="assets/images/logo-icon.png" width="100" alt="Sawtruboost Logo">course-factory</a></h1></center>
 
 <p align="center">Developed with ❤️ by Iyad Sammour fullstack WEB developer using</p>
 <p align="center"><a href="https://php.net" target="_blank"><img src="core-php-ecommerce.webp" width="400" alt="php core Logo"></a></p>
