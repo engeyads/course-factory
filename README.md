@@ -1,4 +1,4 @@
-<h1 align="center"><a href="https://mercuryt.mercury-training.com" target="_blank" style="font-size: 24px; color: black;"><img src="assets/images/logo-icon.png" width="30" alt="course Factory Logo">course-factory</a></h1>
+<h1 align="center"><a href="https://mercuryt.mercury-training.com" target="_blank" style="font-size: 24px; color: black;"><img src="assets/images/logo-icon.png" width="30" alt="course Factory Logo">COURSE-FACTORY</a></h1>
 <p align="center">Developed with ❤️ by Iyad Sammour fullstack WEB developer using</p>
 <p align="center"><a href="https://php.net" target="_blank"><img src="core-php-ecommerce.webp" width="400" alt="php core Logo"></a></p>
 
