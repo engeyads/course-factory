@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "course-factory",
+  "private_key_id": "c6cb07b95343b30ddb883ac28be668bbe3cd55bb",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC5gvHko+K8X7Rs\nNX1DnBRaO+hHEM1Xx2cM8nXGQ3ii5saqLJf4RAOlcfoQpxVdXsIUxtcAa9dlPgEJ\nn5iFpdcFCOHu8QxLC/WO5deQ/xJXcmlgahIXaq1OLNl4b/VAwYIJ5KOT5twphdPh\njTZgCV5ow/BV9zu9GyVXhy2oFYTB0qS4nt59wh9yBQGjI0x10IjhlXIB6ms2Gkvc\nN5Y0iPLdT1PVRfRwve92o2EP3NTp79sF4hRMl+FDLLE+/jUtRexonWflT9sxHbQK\ne1MegIo+05lzTjmpu3QMuV0sT4pF8kSiSOhQKTsdk49cpaj3Uv+prU+J9MVYwmfW\nERHFc2VJAgMBAAECggEAEf3sUDKhW0f0b5C+AARHmItKHzdW1Qo4uUGcMNELJpB3\niNpnmEtfZ6i+2iXcTXiS3fE9ebPb2Xy6nMhy4lZn3NwETphoCvDDXXs27aABc0P8\nSp6q98Svv37bziGcoY3K+wLm5wGrTWcmejAIC6co9gP335yJeZEkDWHFyLEilaoa\nE3AuQr7MmLytSdUvRuax+EdlaxDyZT8WiHIwxKFFnMmozFwHzVk6dWii6y+5Bpr5\nJIrzFwZedxUVavOiXLKdR9k115rPBL3LEmmg8X7TCZfLR2F+1rVSnNG9lFKFwFkQ\nhYmxzE6OBj63d7phw94t+9nOMaKHhvuJmryYN/xEIQKBgQDpP63FI9XJ9wTYATl9\nw0zpZbSrAs0yrgAIKh8AUgraOz61/uP4gEAmIGgke7QflBChFIICG/nNu7CPskOQ\nNJQf3b0qMRH//aXomnFbG17nxyqwzq4oNeEFfI5MTjJLj4AZ87IaJgV3wRyT9Sf+\nWk+Z1qPJXKk2aSiKnomM4iwnoQKBgQDLmz8n/ArMkL5mmZzLiYd/7blPEiZpDTIX\nc3UqptttJSHv1XQGv5RvN/MzHvmaFy1d+rIK7mFKOy9TEqPYd1lHK21M6SSsdrD6\nqw9/WZ5bvalTpk+T3QmytavT4czpStIMnJtvAdgmynRD0WIB0jmrtlbBvh/EQtLv\n2UKZMFO8qQKBgEs5TkGWHQzVrao8Ot5kbhmXw3yjmqoNk9UOQJFJ5FYdZUwsuDkc\no5OoP+4EN0M37WUFyCgF/bpsHbU6OK/5RQxB5xAEY1m75BXwOT64xRLbGNmMzn4J\nYljyorHZRj84OIgmH/pu6LSGg0D0f8F4PtPOdWQrjicOIxURrCrThooBAoGAcI3Y\n4vy055MYflVq1SWo7zJ2X1y0ORyfVVFxMuvcn0CIuzFvm49qufTfD6KO7vzjCnHc\n3KgcxlFjfvPt+Ws4wlwiZwL3UBOpEFliDs92+FYndeOZWC83/j/pxg6sHUdMSMaG\nMl59pCwFC7yDBmi1ktQQr7evjeo2+3pKE68gi0kCgYEAgvBLL2pCegQyyKpR5vg9\nb19CpCpQWokDm4UZEUtlCJ7x5ohrfr8LE1bCpVhww9hMZtVU+JUfvkeqydy5tmfl\nV7yJKPLIkKG1YTTUeqxAjPKU/6bW6bmIPxbg9yzjC8YO8ZVNrAC0N3PimDx/IsoD\nsDxeaTA62fmEDPGBNzoNusA=\n-----END PRIVATE KEY-----\n",
+  "client_email": "indexed@course-factory.iam.gserviceaccount.com",
+  "client_id": "106431835835046245690",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/indexed%40course-factory.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
