@@ -1,4 +1,4 @@
-<h1 align="center"><a href="https://mercuryt.mercury-training.com" target="_blank"><img src="assets/images/logo-icon.png" width="50" alt="Sawtruboost Logo">course-factory</a></h1></center>
+<h1 style="font-size=30px" align="center"><a href="https://mercuryt.mercury-training.com" target="_blank"><img src="assets/images/logo-icon.png" width="50" alt="course Factory Logo">course-factory</a></h1></center>
 
 <p align="center">Developed with ❤️ by Iyad Sammour fullstack WEB developer using</p>
 <p align="center"><a href="https://php.net" target="_blank"><img src="core-php-ecommerce.webp" width="400" alt="php core Logo"></a></p>
@@ -10,7 +10,7 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Sawtru BOOST
+## About Course Factory
 
 We strive to be creative in all of its manifestations.
 ### Our Story
