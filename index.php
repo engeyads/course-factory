@@ -27,31 +27,64 @@ startPerformanceMonitoring($startTime, $startMemory);
 <?php 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-include 'conf.php'; ?>
+include 'conf.php'; 
 
+?>
 <?php include 'layout/head.php';?>
   <title><?php echo $appname; ?></title>
 </head>
 <body>
-  <!--start wrapper-->
-  <div class="wrapper">
+<!-- Loading overlay -->
+<!-- <div id="loading-overlay">
+    <div class="spinner"></div>
+</div> -->
+<!--start wrapper-->
+
+<!-- Loading overlay -->
+<div id="loading-overlay">
+  <div id="loading-content">
+    <center>
+    <div class="logos">
+      <div>
+        <img src="<?php echo $url; ?>assets/images/logo-icon.png" class="loading-logo" alt="logo icon">
+      </div>
+      <div>
+        <h4 class="loading-text"><?php echo $appname; ?></h4>
+      </div>
+    </div>
+    
+        <div class="loading-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+      </center>
+    </div>
+</div>
+
+
+<div class="wrapper">
 <?php include 'layout/header.php';?>
 <?php include 'layout/sidebar.php';?>
        <!--start content-->
        <main class="page-content">
-                    <?php
-                    if (isset($_POST['db'])) {
-                      echo $_POST['db'];
-                      $_SESSION['db'] = $_POST['db'];
-                      $query = "SELECT company FROM db WHERE id = '" . $_POST['db'] . "' LIMIT 1 ";
-                      $result = mysqli_query($conn, $query);
-                      if ($result && mysqli_num_rows($result) > 0) {
-                          $row = mysqli_fetch_assoc($result);
-                          $_SESSION['co'] = $row['company'];
-                      }
-                    }
-                    ?>
-                <?php if ($view != "") include $view; ?>
+        <?php
+        
+          if (isset($_POST['db'])) {
+            echo $_POST['db'];
+            $_SESSION['db'] = $_POST['db'];
+            $query = "SELECT company FROM db WHERE id = '" . $_POST['db'] . "' LIMIT 1 ";
+            $result = mysqli_query($conn, $query);
+            if ($result && mysqli_num_rows($result) > 0) {
+                $row = mysqli_fetch_assoc($result);
+                $_SESSION['co'] = $row['company'];
+            }
+          }
+          if($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'mercuryt.mercury-training.local'){
+            echo "<pre>SESSION : ";print_r( $_SESSION);echo "</pre>";
+          }
+          ?>
+      <?php if ($view != "") include $view; ?>
 			</main>
        <!--end page main-->
        <!--start overlay-->
@@ -60,13 +93,11 @@ include 'conf.php'; ?>
         <!--Start Back To Top Button-->
         <a href="javaScript:;" class="back-to-top"><i class='bx bxs-up-arrow-alt'></i></a>
         <!--End Back To Top Button-->
- 
   </div>
   <!--end wrapper-->
   <!-- Bootstrap bundle JS -->
   <script src="<?php echo $url; ?>assets/js/bootstrap.bundle.min.js"></script>
   <!--plugins-->
- 
   <script src="<?php echo $url; ?>assets/js/jquery.min.js"></script>
   <script src="<?php echo $url; ?>assets/plugins/simplebar/js/simplebar.min.js"></script>
   <script src="<?php echo $url; ?>assets/plugins/metismenu/js/metisMenu.min.js"></script>
@@ -103,9 +134,6 @@ include 'conf.php'; ?>
         xhr.send('db=' + tableId);
     }
 </script>
- 
-
-
   <?php 
   if (isset($conn)){
     CreateKeywordsTables($conn);
@@ -116,5 +144,6 @@ include 'conf.php'; ?>
   <div class="text-right d-flex justify-content-end p-2 pt-0">
     <?php endPerformanceMonitoring($startTime, $startMemory); ?>
   </div>
+
 </body>
 </html>

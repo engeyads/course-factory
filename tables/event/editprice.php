@@ -11,8 +11,8 @@ $start = isset($_GET['start']) ? $_GET['start'] : '';
     $join = " LEFT JOIN course_main on course_main.c_id=course.c_id";
     $join2 = " LEFT JOIN course_c on course_c.id=course_main.course_c";
     $join3 = " LEFT JOIN cities on cities.id=course.city";
-    $custom_where = "WHERE 1 ";
-    $custom_group = "GROUP BY  pric,course.city,course_c.class,course_main.$DBweekname,y1 ORDER BY course.city,course_main.$DBweekname ,course_c.class,y1 ASC";
+    $custom_where = " WHERE 1 ";
+    $custom_group = " GROUP BY  pric,course.city,course_c.class,course_main.$DBweekname,y1 ORDER BY course.city,course_main.$DBweekname ,course_c.class,y1 ASC ";
     $custom_limit = " ";
 
     $query = "$custom_select $custom_from $join $join2 $join3 $custom_where $custom_group $custom_limit";
@@ -59,7 +59,7 @@ $start = isset($_GET['start']) ? $_GET['start'] : '';
                 $daysdration = 11;
                 break;
                 case 3:
-                $daysdration = 18;
+                $daysdration = 17;
                 break;
                 case 4:
                 $daysdration = 25;
@@ -109,8 +109,9 @@ $start = isset($_GET['start']) ? $_GET['start'] : '';
                         $x = 0;
                             while ($row = mysqli_fetch_assoc($records)) {?> 
                                 <tr id="row-<?php echo $x++; ?>">
+                                
                                     <form action="<?php echo $url; ?>event/updateprice" method="POST">
-                                        <?php $citypricecell = 'w'.$row[$DBweekname].'_p'.(strtolower((isset($row['class']) ? $row['class'] : ' ')) == 'a'? '' : '_'.strtolower((isset($row['class']) ? $row['class'] : 'Undefined'))); ?>
+                                        <?php $citypricecell = ($row[$DBweekname] > 4 || $row[$DBweekname] <= 0 ? '' : 'w'.$row[$DBweekname].'_p'.(strtolower((isset($row['class']) ? $row['class'] : ' ')) == 'a'? '' : '_'.strtolower((isset($row['class']) ? $row['class'] : 'Undefined')))); ?>
                                         <td><?php 
                                             foreach ($citiesOptions as $option) {
                                                 $id = $option['id'];
@@ -129,11 +130,14 @@ $start = isset($_GET['start']) ? $_GET['start'] : '';
                                         echo '<td><input style="max-width:100px" onmousedown="setStep(this,100)" onmouseup="resetStep(this)" onwheel="setStep(this,100)" oninput="resetStep(this)" onkeydown="handleKeyDown(event, this)" class="form-control mb-3 theprice" id="customInput" type="number" name="newprice" placeholder="'.$row['pric'].'" value="'.$row['pric'].'"></td>';
                                         ?>
                                         <td><?php
-                                            if($row[$citypricecell]!= null){
-                                                if ($row['pric'] !=  trim($row[$citypricecell])){
-                                                    ?><b><span role="button" class="btn btn-secondary px-5 newprice"><?php echo $row[$citypricecell] != '' ? trim($row[$citypricecell]) : ''; ?></span></b><?php
-                                                }
-                                            } 
+                                            if(isset($row[$citypricecell])){
+
+                                                if($row[$citypricecell] != null && ($row[$citypricecell] <= 4 || $row[$citypricecell] > 0)){
+                                                    if ($row['pric'] !=  trim($row[$citypricecell])){
+                                                        ?><b><span role="button" class="btn btn-secondary px-5 newprice"><?php echo $row[$citypricecell] != '' ? trim($row[$citypricecell]) : ''; ?></span></b><?php
+                                                    }
+                                                }   
+                                            }
                                             ?>
                                         </td>
                                 
@@ -156,7 +160,7 @@ $start = isset($_GET['start']) ? $_GET['start'] : '';
                                         </td>
                                         <td><?php echo $row['class']; ?></td>
                                         <td><?php echo $row['cnt']; ?></td>
-                                        <input type="hidden" name="ws" value="<?php echo $row['pric'] == '' ? 'NULL': $row['pric']; echo $citypricecell; ?>">
+                                        <input type="hidden" name="ws" value="<?php  echo $citypricecell; ?>">
                                         <input type="hidden" name="<?php echo $citypricecell; ?>" value="<?php echo (isset($row[$citypricecell]) ? $row[$citypricecell] : 'NULL' ); ?>">
                                         <input type="hidden" name="city" value="<?php echo $row['city']; ?>">
                                         <input type="hidden" name="<?php echo $DBweekname; ?>" value="<?php echo $row[$DBweekname]; ?>">
@@ -222,6 +226,7 @@ $start = isset($_GET['start']) ? $_GET['start'] : '';
                         citypricecellnm: ws,
                     };
                     data[ws] = standardprice; // Set the property based on the value of ws
+                    console.log(data);
                     data['<?php echo $DBweekname; ?>'] = weeks; // Set the property based on the value of ws
                     
                     var confirmation = confirm('Are you sure you want to change price for '+cityname+' Year: ('+years+') Week: ('+weeks+') Class: ('+classs+') from '+theprice+' to '+standardprice+'?');

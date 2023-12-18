@@ -10,7 +10,7 @@ use Google\Auth\Credentials\ServiceAccountCredentials;
 use GuzzleHttp\Exception\RequestException;
 
 
-$openai_api_key = "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";
+$openai_api_key = "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";
 function call_openai($prompt, $openai_api_key,$system){
 
   global $gptmode;
@@ -117,12 +117,12 @@ function generateTableSelect($conn) {
     $username = $_SESSION['username']; // Get the username from the session
     // Check if the user level is 10 or above
     if ($userlevel >= 10) {
-        $query = "SELECT id, name FROM db";
+        $query = "SELECT id, name FROM db WHERE deleted_at IS NULL";
     } else {
         $query = "SELECT d.id, d.name FROM db AS d 
                   INNER JOIN user_db AS ud ON d.id = ud.db_id 
                   INNER JOIN users AS u ON u.id = ud.user_id 
-                  WHERE u.username = '" . mysqli_real_escape_string($conn, $username) . "'";
+                  WHERE u.username = '" . mysqli_real_escape_string($conn, $username) . "' AND d.deleted_at IS NULL";
     }
     $result = mysqli_query($conn, $query);
     // Check if query execution was successful
@@ -306,7 +306,7 @@ function FormsInput($name, $title, $type, $required = false, $class = '', $count
                   type: "POST",
                   data: {
                     httpurl: "'.$httpurl.'",
-                    prompt: `'.str_replace('<br />', '\\', nl2br($prompt)).'`,
+                    prompt: `'.str_replace('<br />', '', nl2br($prompt)).'`,
                     system: "'.$system.'",
                     type: "'.$type.'",
                     txtval: txtval.replace(/<\/?[^>]+(>|$)/g, ""),
@@ -580,7 +580,7 @@ function FormsImg($name, $title,  $class , $url, $colnm,$tblname,$remoteDirector
             const formData'.$name.' = new FormData();
             formData'.$name.'.append("file", blob'.$name.', imageName'.$name.');
             const xhr'.$name.' = new XMLHttpRequest();
-            xhr'.$name.'.open("POST", "/course-factory/uploadimage/" + imageName'.$name.' + "/'.$remoteDirectory.'/'.$ftpfolderName.'", true);
+            xhr'.$name.'.open("POST", "/uploadimage/" + imageName'.$name.' + "/'.$remoteDirectory.'/'.$ftpfolderName.'", true);
             xhr'.$name.'.setRequestHeader("X-Requested-With", "XMLHttpRequest");
             xhr'.$name.'.onload = function () {
               if (xhr'.$name.'.status === 200) {
@@ -626,7 +626,7 @@ function FormsImg($name, $title,  $class , $url, $colnm,$tblname,$remoteDirector
             $(".modal-body.'.$name.'").html("<div class=\' row modal-body mt-1 '.$name.' \'></div>");
             modalContent'.$name.'.append(modalBody'.$name.');
             $.ajax({
-              url: "/course-factory/getimageurl/",
+              url: "/getimageurl/",
             type: "GET",
             data:{
               t : "'.$tblname.'",
@@ -654,7 +654,7 @@ function FormsImg($name, $title,  $class , $url, $colnm,$tblname,$remoteDirector
                     var imgdiv'.$name.' = $("<div id=\'" + imgID'.$name.' + "\' class=\'imgs'.$name.' col-2 " + imgID'.$name.' + "\'></div>");
                     var delbtn'.$name.' = "<div id=\'delete'.$name.'Container" + imgID'.$name.' + "\'></div><div id=\'deletebtn" + imgID'.$name.' + "\' onclick=\'deleteImage'.$name.'(\"" + imageName'.$name.' + "\",\"" + imgID'.$name.' + "\")\' class=\' btn-delete delete-button mb-3 \' data-image-path=\'" + imageName'.$name.' + "\'><i class=\'bi bi-trash\'></i></div>";
                     var imageElement'.$name.' = $("<img  class=\'img-responsive\' >").attr({
-                      src: "/course-factory/tables/image.php?img=" + imageUrl'.$name.',
+                      src: "/tables/image.php?img=" + imageUrl'.$name.',
                       alt: imageName'.$name.',
                       "data-image-path": imageName'.$name.'
                     });
@@ -693,7 +693,7 @@ function FormsImg($name, $title,  $class , $url, $colnm,$tblname,$remoteDirector
             // Attach click event handlers to confirm buttons
             $("#confirmYes" + id).click(function () {
               var xhr'.$name.' = new XMLHttpRequest();
-              xhr'.$name.'.open("GET", "/course-factory/deleteimage/" + image + "/'.$name.'/'.$tblname.'/'.$remoteDirectory.'/'.$ftpfolderName.'" , true);
+              xhr'.$name.'.open("GET", "/deleteimage/" + image + "/'.$name.'/'.$tblname.'/'.$remoteDirectory.'/'.$ftpfolderName.'" , true);
               xhr'.$name.'.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
               xhr'.$name.'.onload = function () {
                 if (xhr'.$name.'.status === 200) {
@@ -910,7 +910,7 @@ function FormsImg($name, $title,  $class , $url, $colnm,$tblname,$remoteDirector
           const formData'.$name.' = new FormData();
           formData'.$name.'.append("file", blob'.$name.', imageName'.$name.');
           const xhr'.$name.' = new XMLHttpRequest();
-          xhr'.$name.'.open("POST", "/course-factory/uploadimage/" + imageName'.$name.'+"/'.$remoteDirectory.'/'.$ftpfolderName.'", true);
+          xhr'.$name.'.open("POST", "/uploadimage/" + imageName'.$name.'+"/'.$remoteDirectory.'/'.$ftpfolderName.'", true);
           xhr'.$name.'.setRequestHeader("X-Requested-With", "XMLHttpRequest");
           xhr'.$name.'.onload = function () {
             if (xhr'.$name.'.status === 200) {
@@ -956,7 +956,7 @@ function FormsImg($name, $title,  $class , $url, $colnm,$tblname,$remoteDirector
           $(".modal-body.'.$name.'").html("<div class=\' row modal-body mt-1 '.$name.' \'></div>");
           modalContent'.$name.'.append(modalBody'.$name.');
           $.ajax({
-            url: "/course-factory/getimageurl/",
+            url: "/getimageurl/",
             type: "GET",
             data:{
               t : "'.$tblname.'",
@@ -984,7 +984,7 @@ function FormsImg($name, $title,  $class , $url, $colnm,$tblname,$remoteDirector
                   var imgdiv'.$name.' = $("<div id=\'" + imgID'.$name.' + "\' class=\'imgs'.$name.' col-2 " + imgID'.$name.' + "\'></div>");
                   var delbtn'.$name.' = "<div id=\'delete'.$name.'Container" + imgID'.$name.' + "\'></div><div id=\'deletebtn" + imgID'.$name.' + "\' onclick=\'deleteImage'.$name.'(\"" + imageName'.$name.' + "\",\"" + imgID'.$name.' + "\")\' class=\' btn-delete delete-button mb-3 \' data-image-path=\'" + imageName'.$name.' + "\'><i class=\'bi bi-trash\'></i></div>";
                   var imageElement'.$name.' = $("<img  class=\'img-responsive\' >").attr({
-                    src: "/course-factory/tables/image.php?img=" + imageUrl'.$name.',
+                    src: "/tables/image.php?img=" + imageUrl'.$name.',
                     alt: imageName'.$name.',
                     "data-image-path": imageName'.$name.'
                   });
@@ -1023,7 +1023,7 @@ function FormsImg($name, $title,  $class , $url, $colnm,$tblname,$remoteDirector
           // Attach click event handlers to confirm buttons
           $("#confirmYes" + id).click(function () {
             var xhr'.$name.' = new XMLHttpRequest();
-            xhr'.$name.'.open("GET", "/course-factory/deleteimage/" + image + "/'.$name.'/'.$tblname.'/'.$remoteDirectory.'/'.$ftpfolderName.'" , true);
+            xhr'.$name.'.open("GET", "/deleteimage/" + image + "/'.$name.'/'.$tblname.'/'.$remoteDirectory.'/'.$ftpfolderName.'" , true);
             xhr'.$name.'.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
             xhr'.$name.'.onload = function () {
               if (xhr'.$name.'.status === 200) {
@@ -1196,7 +1196,7 @@ function FormsText($name, $title, $type,$validby, $required = false, $class = ''
                   type: "POST",
                   data: {
                     httpurl: "'.$httpurl.'",
-                    prompt: `'.str_replace('<br />', '\\', nl2br($prompt)).'`,
+                    prompt: `'.str_replace('<br />', '', nl2br($prompt)).'`,
                     system: "'.$system.'",
                     type: "'.$type.'",
                     txtval: txtval.replace(/<\/?[^>]+(>|$)/g, ""),
@@ -1408,7 +1408,55 @@ function FormsDateTime($field_name, $title, $required = false, $class = '') {
         ';
     }
 }
-
+function FormsDateTimeNew($field_name, $title, $required = false, $class = '') {
+  global $row, $Columns;
+  $value = $row[$field_name] ?? '';
+  if ($required) { $required = 'required'; }
+  if (in_array($field_name, $Columns)) {
+      echo '
+      <div class="' . $class . ' mb-3">
+        <div class="row">
+          <div class="col-11">
+            <label class="form-label">Start Date</label>
+            <input class="result form-control" type="text" placeholder="' . $title . '" aria-label="' . $field_name . '" name="' . $field_name . '" id="' . $field_name . '" value="' . $value . '" ' . $required . '> 
+            </div><div class="col-1">
+              <button id="button_'.$field_name.'" type="button"  class="btn btn-secondary px-1 mt-4" onclick="" type="button" >Clear</button>
+            </div>
+          </div>
+        </div>
+        <script>
+        $(document).ready(function() {
+          var $'.$field_name.' = $("#'.$field_name.'").pickadate({
+              selectMonths: true,
+              selectYears: true,
+              format: "yyyy-mm-dd"
+              
+          });
+          $("#button_'.$field_name.'").click(function() {
+            document.getElementById(\'' . $field_name . '\').value = \'\';
+              $(".validby").each(function() {
+                //console.log($(this).parent().find(".current-value").data().valid);
+                var functionName = "updateCount"+$(this).prop("id");
+                window[functionName]();
+                
+                $(this).parent().find(".current-value").removeClass("notvalid");
+              });
+          });
+        });
+        function checkonclear(){
+          document.getElementById(\'' . $field_name . '\').value = \'\';
+          $(".validby").each(function() {
+            //console.log($(this).parent().find(".current-value").data().valid);
+            var functionName = "updateCount"+$(this).prop("id");
+            window.window[functionName]();
+            $(this).keyup();
+            $(this).parent().find(".current-value").data.valid="true";
+          });
+      }
+        </script>
+      ';
+  }
+}
 function FormsCheck($name, $title, $type, $required = false,$vl='1', $class = '' ) {
   global $row, $Columns;
   $value = $row[$name] ?? '';
@@ -1520,35 +1568,38 @@ function GetTableColumns($tablename,$conn2) {
 //////here
 
 function generateSlug($string) {
-    $separator = '-';
-    $maxLength = 90;
-    // Trim leading/trailing whitespace from the title
-    $string = trim($string);
+  $separator = '-';
+  $maxLength = 90;
 
-    // Check if the title is empty or contains only non-alphanumeric characters
-    if (empty($string) || !preg_match('/[a-z0-9]/i', $string)) {
-        exit('error on create slug');
-    }
-    // Convert the string to lowercase
-    $string = mb_strtolower($string, 'UTF-8');
+  // Trim leading/trailing whitespace from the title
+  $string = trim($string);
 
-    // Replace non-alphanumeric characters with separator
-    $string = preg_replace('/[^a-z0-9' . preg_quote($separator) . ']+/', $separator, $string);
+  // Check if the title is empty
+  if (empty($string)) {
+      exit('error on create slug');
+  }
 
-    // Replace ampersand with "and"
-    $string = str_replace('&', 'and', $string);
+  // Convert the string to lowercase using mb_strtolower for UTF-8 support
+  $string = mb_strtolower($string, 'UTF-8');
 
-    // Remove leading/trailing separator
-    $string = trim($string, $separator);
+  // Replace non-alphanumeric characters with separator
+  $string = preg_replace('/[^\p{L}0-9' . preg_quote($separator) . ']+/u', $separator, $string);
 
-    // Remove consecutive separators
-    $string = preg_replace('/' . preg_quote($separator) . '{2,}/', $separator, $string);
+  // Replace ampersand with "and"
+  $string = str_replace('&', 'and', $string);
 
-    // Limit the slug length
-    if (strlen($string) > $maxLength) {
-        $string = substr($string, 0, $maxLength);
-    }
-    return $string;
+  // Remove leading/trailing separator
+  $string = trim($string, $separator);
+
+  // Remove consecutive separators
+  $string = preg_replace('/' . preg_quote($separator) . '{2,}/', $separator, $string);
+
+  // Limit the slug length
+  if (mb_strlen($string, 'UTF-8') > $maxLength) {
+      $string = mb_substr($string, 0, $maxLength, 'UTF-8');
+  }
+
+  return $string;
 }
 
 
@@ -1816,7 +1867,7 @@ function getAccessToken($client) {
 
 function is_indexed($siteUrl,$inspectionUrl){
   
-  $jsonKey = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/course-factory/assets/plugins/google-api-php-client-main/course-factory-3659eef69891.json');
+  $jsonKey = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/assets/plugins/google-api-php-client-main/course-factory-3659eef69891.json');
     $credentials = new ServiceAccountCredentials(
         ['https://www.googleapis.com/auth/webmasters.readonly'],
         json_decode($jsonKey, true) // Parse the JSON content to an array
@@ -1857,7 +1908,7 @@ function is_indexed($siteUrl,$inspectionUrl){
 }
 
 // function submitGoogleSitemap($siteUrl, $sitemapFeedPath) {
-//   $jsonKey = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/course-factory/assets/plugins/google-api-php-client-main/course-factory-3659eef69891.json');
+//   $jsonKey = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/assets/plugins/google-api-php-client-main/course-factory-3659eef69891.json');
   
 //   $credentials = new ServiceAccountCredentials(
 //     ['https://www.googleapis.com/auth/webmasters.readonly'],
@@ -1993,7 +2044,7 @@ print_r($response);
         $client = new Google_Client();
 
         // Set the credentials using the JSON key file
-        $client->setAuthConfig($_SERVER['DOCUMENT_ROOT'] . '/course-factory/assets/plugins/google-api-php-client-main/course-factory-3659eef69891.json');
+        $client->setAuthConfig($_SERVER['DOCUMENT_ROOT'] . '/assets/plugins/google-api-php-client-main/course-factory-3659eef69891.json');
 
         // Set the scopes for the Google Search Console API
         $client->setScopes(['https://www.googleapis.com/auth/webmasters']);

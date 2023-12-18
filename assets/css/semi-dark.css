@@ -10,6 +10,12 @@ html.semi-dark a.btn {
     color:white;
 }
 
+
+
+html.semi-dark .card-special {
+    background-color: #d3e4ff !important;
+}
+
 html.semi-dark .top-header .navbar .toggle-icon i{
     color: #1a2232 ; 
 }

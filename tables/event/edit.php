@@ -126,7 +126,7 @@ $Columns = GetTableColumns($tablename,$theconnection);
              if (!$id) {
                 $row['published_at'] = date('Y-m-d');
              }
-            FormsDateTime('published_at','Publish Date And Time', false, 'col-6') ;
+             FormsDateTimeNew('published_at','Publish Date And Time', false, 'col-6') ;
             FormsEnd(); 
                         
             
@@ -220,6 +220,10 @@ $Columns = GetTableColumns($tablename,$theconnection);
     $jsonarrays = [];
     $imagePaths = [];
     $urlPaths = [];
+    $editPath = 'city';
+    $urlPath = 'id';
+    // $no_link = true;
+    // $no_edits = true;
     $fieldTitles = ['x'=>'Repeat Ratio','id' => 'Event ID','certain' => 'Upcoming', 'start_date' => 'Start Date', 'end_date' => 'End Date', 'created_at' => 'Created', 'updated_at' => 'Updated' , 'published_at' => 'Publish','city' => 'City','price' => 'Price','currency' => 'Currency'];
     $dateColumns = ['created_at', 'updated_at','published_at']; // replace with your actual date columns
     $cities = GetForSelect('cities' , $conn2, 'id', 'name');
@@ -236,12 +240,6 @@ $Columns = GetTableColumns($tablename,$theconnection);
             'param1' => 'id',
             'param2' => 'name',
         ),
-        // array(
-        //     'column' => 'c_id',
-        //     'table' => 'course_main',
-        //     'param1' => 'c_id',
-        //     'param2' => 'name',
-        // ),
     );
     // $custom_from = "FROM course
     // LEFT JOIN cities ON course.city = cities.id

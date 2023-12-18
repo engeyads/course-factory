@@ -60,7 +60,7 @@ if(!isset($adminajaxview)){
                         'X-Requested-Session': '<?php echo session_id(); ?>'
                     },
                     'ajax': {
-                        'url':'/course-factory/include/adminajaxfile.php',
+                        'url':'/include/adminajaxfile.php',
                         'data': function (data) {
                             data.start = data.start;
                             data.length = data.length;

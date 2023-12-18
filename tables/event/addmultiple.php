@@ -245,7 +245,7 @@ if($cid == null){
         $cid = $c_id['c_id'];
         
     }else{
-        echo "no course with this id<br><button class='btn btn-primary float-right justify-content-end' onclick='window.location.href = \"/course-factory/event/addmultiple/\"'>Go To Add Multiple Events</button>";
+        echo "no course with this id<br><button class='btn btn-primary float-right justify-content-end' onclick='window.location.href = \"/event/addmultiple/\"'>Go To Add Multiple Events</button>";
         exit;
     }
 }
@@ -296,7 +296,7 @@ if (isset($c_id) ) {
     function nextPage($next,$limit){
         echo "<script>
                 setTimeout(function() {
-                    window.location.href = '/course-factory/event/addmultiple/$next/$limit';
+                    window.location.href = '/event/addmultiple/$next/$limit';
                 }, 3000); // Wait for 3000 milliseconds (3 seconds) before redirecting
             </script>";
     }

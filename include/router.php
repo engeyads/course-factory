@@ -2,74 +2,80 @@
 require 'vendor/autoload.php'; 
 $appname = "Course Factory";
 $view = ""; // This variable will hold the path to the view file
-$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
 
-    $r->addRoute('POST', '/courses/update', function() {
+
+$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
+if($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'mercuryt.mercury-training.local'){
+    $lcl = '/';
+}else{
+    $lcl = '';
+}
+    $r->addRoute('POST', $lcl.'courses/update', function() {
         return 'tables/courses/update.php'; // Return the path as a string
    });
 
-    $r->addRoute('GET', '/courses/trash/{id:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'courses/trash/{id:[0-9]+}', function($params) {
         $id = $params['id']; // Extract the id from the params array
         $_GET['id'] = $id; 
         return 'tables/courses/trash.php'; // Return the path as a string
     });
 
-    $r->addRoute('GET', '/courses/delete/{id:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'courses/delete/{id:[0-9]+}', function($params) {
         $id = $params['id']; // Extract the id from the params array
         $_GET['id'] = $id; 
         return 'tables/courses/delete.php'; // Return the path as a string
     });
 
-    $r->addRoute('GET', '/courses/view', function() {
+    $r->addRoute('GET', $lcl.'courses/view', function() {
         return 'tables/courses/view.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/courses/edit/{id:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'courses/edit/{id:[0-9]+}', function($params) {
         $id = $params['id']; // Extract the id from the params array
         $_GET['id'] = $id; 
         return 'tables/courses/edit.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/courses/edit', function() {
+    $r->addRoute('GET', $lcl.'courses/edit', function() {
         return 'tables/courses/edit.php'; // Return the path as a string
     });
 
 
-    $r->addRoute('GET', '/course_main/addmultyple/{id:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'course_main/addmultyple/{id:[0-9]+}', function($params) {
         $id = $params['id']; // Extract the id from the params array
         $_GET['id'] = $id; 
         return 'tables/course_main/addmultyple.php'; // Return the path as a string
     });
  
 
-    $r->addRoute('POST', '/course_main/updatemultiple', function() {
+    $r->addRoute('POST', $lcl.'course_main/updatemultiple', function() {
         return 'tables/course_main/updatemultiple.php'; // Return the path as a string
     });
 
     
-    $r->addRoute('POST', '/course_main/update', function() {
+    $r->addRoute('POST', $lcl.'course_main/update', function() {
         return 'tables/course_main/update.php'; // Return the path as a string
    });
 
-    $r->addRoute('GET', '/course_main/trash/{id:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'course_main/trash/{id:[0-9]+}', function($params) {
         $id = $params['id']; // Extract the id from the params array
         $_GET['id'] = $id; 
         return 'tables/course_main/trash.php'; // Return the path as a string
     });
 
-    $r->addRoute('GET', '/course_main/delete/{id:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'course_main/delete/{id:[0-9]+}', function($params) {
         $id = $params['id']; // Extract the id from the params array
         $_GET['id'] = $id; 
         return 'tables/course_main/delete.php'; // Return the path as a string
     });
 
-    $r->addRoute('GET', '/course_main/view', function() {
+    $r->addRoute('GET', $lcl.'course_main/view', function() {
         return 'tables/course_main/view.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/course_main/edit/{id:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'course_main/edit/{id:[0-9]+}', function($params) {
         $id = $params['id']; // Extract the id from the params array
         $_GET['id'] = $id; 
         return 'tables/course_main/edit.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/course_main/edit', function() {
+    $r->addRoute('GET', $lcl.'course_main/edit', function() {
         return 'tables/course_main/edit.php'; // Return the path as a string
     });
 
@@ -78,331 +84,360 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
 
     ////////////////////////////////   event 
 
-    $r->addRoute('POST', '/event/update', function() {
+    $r->addRoute('POST', $lcl.'event/update', function() {
         return 'tables/event/update.php'; // Return the path as a string
     });
 
-    $r->addRoute('GET', '/event/trash/{id:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'event/trash/{id:[0-9]+}', function($params) {
         $id = $params['id']; // Extract the id from the params array
         $_GET['id'] = $id; 
         return 'tables/event/trash.php'; // Return the path as a string
     });
 
-    $r->addRoute('GET', '/event/delete/{id:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'event/delete/{id:[0-9]+}', function($params) {
         $id = $params['id']; // Extract the id from the params array
         $_GET['id'] = $id; 
         return 'tables/event/delete.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/event/addmultiple/', function() {
+    $r->addRoute('GET', $lcl.'event/addmultiple/', function() {
         return 'tables/event/addmultiple.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/event/addmultiple/{cid:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'event/addmultiple/{cid:[0-9]+}', function($params) {
         $cid = $params['cid']; // Extract the id from the params array
         $_GET['cid'] = $cid;
          $_GET['start'] = $cid; 
         return 'tables/event/addmultiple.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/event/addmultipleforcourse/{cid:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'event/addmultiplebycourse/{cid:[0-9]+}', function($params) {
         $cid = $params['cid']; // Extract the id from the params array
         $_GET['cid'] = $cid;
          $_GET['start'] = $cid; 
         return 'tables/event/addmultipleold.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/event/addmultiple/{cid:[0-9]+}/{limit:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'event/addmultipleforcourse/{cid:[0-9]+}', function($params) {
+        $cid = $params['cid']; // Extract the id from the params array
+        $_GET['cid'] = $cid;
+         $_GET['start'] = $cid; 
+        return 'tables/event/addmultipleold.php'; // Return the path as a string
+    });
+    $r->addRoute('GET', $lcl.'event/addmultiple/{cid:[0-9]+}/{limit:[0-9]+}', function($params) {
         $cid = $params['cid']; // Extract the id from the params array
         $limit = $params['limit']; // Extract the id from the params array
         $_GET['start'] = $cid; 
         $_GET['limit'] = $limit; 
         return 'tables/event/addmultiple.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/event/addmultiplecron/', function() {
+    $r->addRoute('GET', $lcl.'event/addmultiplecron/', function() {
         return 'tables/event/addmultiplecron.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/event/addmultiplecron/{limit:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'event/addmultiplecron/{limit:[0-9]+}', function($params) {
         $limit = $params['cid']; // Extract the id from the params array
         $_GET['limit'] = $limit; 
         return 'tables/event/addmultiplecron.php'; // Return the path as a string
     });
     
-    $r->addRoute('POST', '/event/updatemultiple', function() {
+    $r->addRoute('POST', $lcl.'event/updatemultiple', function() {
         return 'tables/event/updatemultiple.php'; // Return the path as a string
     });
-    $r->addRoute('POST', '/event/updateduplicate', function() {
+    $r->addRoute('POST', $lcl.'event/updateduplicate', function() {
         return 'tables/event/updateduplicate.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/event/view', function() {
+    $r->addRoute('GET', $lcl.'event/view/{category}/{city}/{upcomming}/{monday}/{y1}/{y2}/{m1}/{m2}/{d1}/{d2}', function($params) {
+        $category = $params['category']; // Extract the category from the params array
+        $city = $params['city']; // Extract the city from the params array
+        $upcomming = $params['upcomming']; // Extract the upcomming from the params array
+        $monday = $params['monday']; // Extract the monday from the params array
+        $y1 = $params['y1']; // Extract the y1 from the params array
+        $y2 = $params['y2']; // Extract the y2 from the params array
+        $m1 = $params['m1']; // Extract the m1 from the params array
+        $m2 = $params['m2']; // Extract the m2 from the params array
+        $d1 = $params['d1']; // Extract the d1 from the params array
+        $d2 = $params['d2']; // Extract the d2 from the params array
+        $_GET['category'] = $category; 
+        $_GET['city'] = $city; 
+        $_GET['upcomming'] = $upcomming; 
+        $_GET['monday'] = $monday; 
+        $_GET['y1'] = $y1;
+        $_GET['y2'] = $y2;
+        $_GET['m1'] = $m1;
+        $_GET['m2'] = $m2;
+        $_GET['d1'] = $d1;
+        $_GET['d2'] = $d2;
         return 'tables/event/view.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/event/editprice', function() {
+    $r->addRoute('GET', $lcl.'event/view', function() {
+        return 'tables/event/view.php'; // Return the path as a string
+    });
+    $r->addRoute('GET', $lcl.'event/editprice', function() {
         return 'tables/event/editprice.php'; // Return the path as a string
     });
-    $r->addRoute('POST', '/event/updateprice', function() {
+    $r->addRoute('POST', $lcl.'event/updateprice', function() {
         return 'tables/event/updateprice.php'; // Return the path as a string
     });
-    $r->addRoute('POST', '/event/deleteprice', function() {
+    $r->addRoute('POST', $lcl.'event/deleteprice', function() {
         return 'tables/event/deleteprice.php'; // Return the path as a string
     });
-    $r->addRoute('POST', '/event/updateDuration', function() {
+    $r->addRoute('POST', $lcl.'event/updateDuration', function() {
         return 'tables/event/updateDuration.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/event/updateDuration/{id:[0-9]+}/{duration:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'event/updateDuration/{id:[0-9]+}/{duration:[0-9]+}', function($params) {
         $_GET['id'] = $params['id'];
         $_GET['newDuration'] = $params['duration'];
         return 'tables/event/updateDuration.php'; // Return the path as a string
     });
 
-    $r->addRoute('GET', '/event/fixold', function() {
+    $r->addRoute('GET', $lcl.'event/fixold', function() {
         return 'tables/event/fixold.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/event/fixduplicate', function() {
+    $r->addRoute('GET', $lcl.'event/fixduplicate', function() {
         return 'tables/event/fixduplicate.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/event/fixdurations', function() {
+    $r->addRoute('GET', $lcl.'event/fixdurations', function() {
         return 'tables/event/fixdurations.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/event/fixdurations/auto', function() {
+    $r->addRoute('GET', $lcl.'event/fixdurations/auto', function() {
         $_GET['auto'] = 'true';
         return 'tables/event/fixdurations.php'; // Return the path as a string
     });
     
-    $r->addRoute('GET', '/event/edit/{c_id:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'event/edit/{c_id:[0-9]+}', function($params) {
         $id = $params['c_id']; // Extract the id from the params array
         $_GET['c_id'] = $id; 
         return 'tables/event/edit.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/event/edit/{course:[0-9]+}/{id:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'event/edit/{course:[0-9]+}/{id:[0-9]+}', function($params) {
         $id = $params['id']; // Extract the id from the params array
         $_GET['id'] = $id; 
         $_GET['course'] = $params['course']; 
         return 'tables/event/edit.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/event/edit', function() {
+    $r->addRoute('GET', $lcl.'event/edit', function() {
         return 'tables/event/edit.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/event/addeventtocourse', function() {
+    $r->addRoute('GET', $lcl.'event/addeventtocourse', function() {
         return 'tables/event/addeventtocourse.php'; // Return the path as a string
     });
 
     ///////////////////////////////////////////////
 
-    $r->addRoute('POST', '/tags/update', function() {
+    $r->addRoute('POST', $lcl.'tags/update', function() {
         return 'tables/tags/update.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/tags/view', function() {
+    $r->addRoute('GET', $lcl.'tags/view', function() {
         return 'tables/tags/view.php'; // Return the path as a string
     });
 
-    $r->addRoute('GET', '/tags/delete/{id:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'tags/delete/{id:[0-9]+}', function($params) {
         $id = $params['id']; // Extract the id from the params array
         $_GET['id'] = $id; 
         return 'tables/tags/delete.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/tags/edit/{id:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'tags/edit/{id:[0-9]+}', function($params) {
         $id = $params['id']; // Extract the id from the params array
         $_GET['id'] = $id; 
         return 'tables/tags/edit.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/tags/edit', function() {
+    $r->addRoute('GET', $lcl.'tags/edit', function() {
         return 'tables/tags/edit.php'; // Return the path as a string
     }); 
-    $r->addRoute('GET', '/subtags/addmultyple', function() {
+    $r->addRoute('GET', $lcl.'subtags/addmultyple', function() {
         return 'tables/subtags/addmultyple.php'; // Return the path as a string
     }); 
 
-    $r->addRoute('POST', '/subtags/addmultypleupdate', function() {
+    $r->addRoute('POST', $lcl.'subtags/addmultypleupdate', function() {
         return 'tables/subtags/addmultypleupdate.php'; // Return the path as a string
     });
 
 
-    $r->addRoute('POST', '/subtags/update', function() {
+    $r->addRoute('POST', $lcl.'subtags/update', function() {
         return 'tables/subtags/update.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/subtags/view', function() {
+    $r->addRoute('GET', $lcl.'subtags/view', function() {
         return 'tables/subtags/view.php'; // Return the path as a string
     });
 
-    $r->addRoute('GET', '/subtags/delete/{id:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'subtags/delete/{id:[0-9]+}', function($params) {
         $id = $params['id']; // Extract the id from the params array
         $_GET['id'] = $id; 
         return 'tables/subtags/delete.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/subtags/edit/{id:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'subtags/edit/{id:[0-9]+}', function($params) {
         $id = $params['id']; // Extract the id from the params array
         $_GET['id'] = $id; 
         return 'tables/subtags/edit.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/subtags/edit', function() {
+    $r->addRoute('GET', $lcl.'subtags/edit', function() {
         return 'tables/subtags/edit.php'; // Return the path as a string
     }); 
 
-    $r->addRoute('GET', '/cities/view', function() {
+    $r->addRoute('GET', $lcl.'cities/view', function() {
         return 'tables/cities/view.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/cities/edit/{id:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'cities/edit/{id:[0-9]+}', function($params) {
         $id = $params['id']; // Extract the id from the params array
         $_GET['id'] = $id; 
         return 'tables/cities/edit.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/cities/edit', function() {
+    $r->addRoute('GET', $lcl.'cities/edit', function() {
         return 'tables/cities/edit.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/cities/delete/{id:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'cities/delete/{id:[0-9]+}', function($params) {
         $id = $params['id']; // Extract the id from the params array
         $_GET['id'] = $id; 
         return 'tables/cities/delete.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/cities/trash/{id:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'cities/trash/{id:[0-9]+}', function($params) {
         $id = $params['id']; // Extract the id from the params array
         $_GET['id'] = $id; 
         return 'tables/cities/trash.php'; // Return the path as a string
     });
 
-    $r->addRoute('POST', '/cities/update', function() {
+    $r->addRoute('POST', $lcl.'cities/update', function() {
         return 'tables/cities/update.php'; // Return the path as a string
    });
 
-    $r->addRoute('POST', '/categories/update', function() {
+    $r->addRoute('POST', $lcl.'categories/update', function() {
          return 'tables/categories/update.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/categories/view', function() {
+    $r->addRoute('GET', $lcl.'categories/view', function() {
         return 'tables/categories/view.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/categories/trash/{id:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'categories/trash/{id:[0-9]+}', function($params) {
         $id = $params['id']; // Extract the id from the params array
         $_GET['id'] = $id; 
         return 'tables/categories/trash.php'; // Return the path as a string
     });
 
-    $r->addRoute('GET', '/categories/delete/{id:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'categories/delete/{id:[0-9]+}', function($params) {
         $id = $params['id']; // Extract the id from the params array
         $_GET['id'] = $id; 
         return 'tables/categories/delete.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/categories/edit/{id:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'categories/edit/{id:[0-9]+}', function($params) {
         $id = $params['id']; // Extract the id from the params array
         $_GET['id'] = $id; 
         return 'tables/categories/edit.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/categories/edit', function() {
+    $r->addRoute('GET', $lcl.'categories/edit', function() {
         return 'tables/categories/edit.php'; // Return the path as a string
     }); 
-    $r->addRoute('GET', '/users/view', function() {
+    $r->addRoute('GET', $lcl.'users/view', function() {
         return 'tables/users/view.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/users/edit/{id:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'users/edit/{id:[0-9]+}', function($params) {
         $id = $params['id']; // Extract the id from the params array
         $_GET['id'] = $id; 
         return 'tables/users/edit.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/users/edit', function() {
+    $r->addRoute('GET', $lcl.'users/edit', function() {
         return 'tables/users/edit.php'; // Return the path as a string
     });
-    $r->addRoute('POST', '/users/update', function() {
+    $r->addRoute('POST', $lcl.'users/update', function() {
         return 'tables/users/update.php'; // Return the path as a string
     });
 
-    $r->addRoute('GET', '/seo/view', function() {
+    $r->addRoute('GET', $lcl.'seo/view', function() {
         return 'tables/seo/view.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/seo/edit', function() {
+    $r->addRoute('GET', $lcl.'seo/edit', function() {
         return 'tables/seo/edit.php'; // Return the path as a string
     });
-    $r->addRoute('POST', '/seo/update', function() {
+    $r->addRoute('POST', $lcl.'seo/update', function() {
         return 'tables/seo/update.php'; // Return the path as a string
     });
-    $r->addRoute('POST', '/seo/functions', function() {
+    $r->addRoute('POST', $lcl.'seo/functions', function() {
         return 'tables/seo/functions.php'; // Return the path as a string
     });
 
-    $r->addRoute('GET', '/profile/view', function() {
+    $r->addRoute('GET', $lcl.'profile/view', function() {
         return 'tables/profile/view.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/profile/edit', function() {
+    $r->addRoute('GET', $lcl.'profile/edit', function() {
         return 'tables/profile/edit.php'; // Return the path as a string
     });
-    $r->addRoute('POST', '/profile/update', function() {
+    $r->addRoute('POST', $lcl.'profile/update', function() {
         return 'tables/profile/update.php'; // Return the path as a string
     });
-    $r->addRoute('POST', '/profile/upload', function() {
+    $r->addRoute('POST', $lcl.'profile/upload', function() {
         return 'tables/profile/upload.php'; // Return the path as a string
     });
 
-    $r->addRoute('GET', '/keyword/keyword_category_add_multiple', function() {
+    $r->addRoute('GET', $lcl.'keyword/keyword_category_add_multiple', function() {
         return 'tables/keyword/keyword_category_add_multiple.php'; // Return the path as a string
     });
-    $r->addRoute('POST', '/keyword/deleteall_relation', function() {
+    $r->addRoute('POST', $lcl.'keyword/deleteall_relation', function() {
         return 'tables/keyword/deleteall_relation.php'; // Return the path as a string
     });
 
-    $r->addRoute('GET', '/keyword/subtag', function() {
+    $r->addRoute('GET', $lcl.'keyword/subtag', function() {
         return 'tables/keyword/subtag.php'; // Return the path as a string
     });
-    $r->addRoute('POST', '/keyword/keyword_category_add_multiple_update', function() {
+    $r->addRoute('POST', $lcl.'keyword/keyword_category_add_multiple_update', function() {
         return 'tables/keyword/keyword_category_add_multiple_update.php'; // Return the path as a string
     });
-    $r->addRoute('POST', '/keyword/keyword_category_update', function() {
+    $r->addRoute('POST', $lcl.'keyword/keyword_category_update', function() {
         return 'tables/keyword/keyword_category_update.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/keyword/keyword_category_view', function() {
+    $r->addRoute('GET', $lcl.'keyword/keyword_category_view', function() {
         return 'tables/keyword/keyword_category_view.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/keyword/keyword_category_trash/{id:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'keyword/keyword_category_trash/{id:[0-9]+}', function($params) {
         $id = $params['id']; // Extract the id from the params array
         $_GET['id'] = $id; 
         return 'tables/keyword/keyword_category_trash.php'; // Return the path as a string
     });
-        $r->addRoute('GET', '/keyword/keyword_category_delete/{id:[0-9]+}', function($params) {
+        $r->addRoute('GET', $lcl.'keyword/keyword_category_delete/{id:[0-9]+}', function($params) {
         $id = $params['id']; // Extract the id from the params array
         $_GET['id'] = $id; 
         return 'tables/keyword/keyword_category_delete.php'; // Return the path as a string
     });
  
-    $r->addRoute('POST', '/keyword/delete_relation', function() {
+    $r->addRoute('POST', $lcl.'keyword/delete_relation', function() {
         return 'tables/keyword/delete_relation.php'; // Return the path as a string
     });
 
-    $r->addRoute('GET', '/keyword/ai3', function() {
+    $r->addRoute('GET', $lcl.'keyword/ai3', function() {
         return 'tables/keyword/ai3.php'; // Return the path as a string
     });
 
 
-    $r->addRoute('GET', '/keyword/keyword_category_edit/{id:[0-9]+}', function($params) {
+    $r->addRoute('GET', $lcl.'keyword/keyword_category_edit/{id:[0-9]+}', function($params) {
         $id = $params['id']; // Extract the id from the params array
         $_GET['id'] = $id; 
         return 'tables/keyword/keyword_category_edit.php'; // Return the path as a string
     });
 
-    $r->addRoute('GET', '/keyword/keyword_category_edit', function() {
+    $r->addRoute('GET', $lcl.'keyword/keyword_category_edit', function() {
         return 'tables/keyword/keyword_category_edit.php'; // Return the path as a string
     }); 
 
 
-    $r->addRoute('GET', '/keyword/ai2', function() {
+    $r->addRoute('GET', $lcl.'keyword/ai2', function() {
         return 'tables/keyword/ai2.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/keyword/ai', function() {
+    $r->addRoute('GET', $lcl.'keyword/ai', function() {
         return 'tables/keyword/ai.php'; // Return the path as a string
     });
 
-    $r->addRoute('GET', '/keyword/fix', function() {
+    $r->addRoute('GET', $lcl.'keyword/fix', function() {
         return 'tables/keyword/fix.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/keyword/tags', function() {
+    $r->addRoute('GET', $lcl.'keyword/tags', function() {
         return 'tables/keyword/tags.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/keyword/aikeysubtag', function() {
+    $r->addRoute('GET', $lcl.'keyword/aikeysubtag', function() {
         return 'tables/keyword/aikeysubtag.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/keyword/view', function() {
+    $r->addRoute('GET', $lcl.'keyword/view', function() {
         return 'tables/keyword/view.php'; // Return the path as a string
     });
 
-    $r->addRoute('GET', '/keyword/viewall', function() {
+    $r->addRoute('GET', $lcl.'keyword/viewall', function() {
         return 'tables/keyword/viewall.php'; // Return the path as a string
     });
 
 
-    $r->addRoute('GET', '/getimage/{t}/{c}/{col}/{remoteDirectory}/{dir}', function($params) {
+    $r->addRoute('GET', $lcl.'getimage/{t}/{c}/{col}/{remoteDirectory}/{dir}', function($params) {
         $_GET['t'] = $params['t'];
         $_GET['c'] = $params['c'];
         $_GET['col'] = $params['col'];
@@ -410,7 +445,7 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
         $_GET['remoteDirectory'] = $params['remoteDirectory'];
         return 'tables/getimage.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/getimageurl/', function($params) {
+    $r->addRoute('GET', $lcl.'getimageurl/', function($params) {
         $_GET['t'] = $_GET['t'];
         $_GET['c'] = $_GET['c'];
         $_GET['col'] = $_GET['col'];
@@ -418,22 +453,22 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
         
         return 'tables/getimage.php'; // Return the path as a string
     });
-    $r->addRoute('POST', '/getimage/{t}/{url}', function($params) {
+    $r->addRoute('POST', $lcl.'getimage/{t}/{url}', function($params) {
         $_GET['t'] = $params['t'];
         $_GET['url'] = $params['url'];
         return 'tables/getimagepost.php'; // Return the path as a string
     });
-    $r->addRoute('POST', '/uploadimage/{image}/{remoteDirectory}/{dir}', function($params) {
+    $r->addRoute('POST', $lcl.'uploadimage/{image}/{remoteDirectory}/{dir}', function($params) {
         $image = $params['image']; // Extract the id from the params array
         $_GET['image'] = $image; 
         $_GET['dir'] = $params['dir'];
         $_GET['remoteDirectory'] = $params['remoteDirectory'];
         return 'tables/uploadimage.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/image/{img}', function($params) {
+    $r->addRoute('GET', $lcl.'image/{img}', function($params) {
         return 'tables/uploadimage.php'; // Return the path as a string
     });
-    $r->addRoute('GET', '/deleteimage/{image}/{c}/{t}/{remoteDirectory}/{dir}', function($params) {
+    $r->addRoute('GET', $lcl.'deleteimage/{image}/{c}/{t}/{remoteDirectory}/{dir}', function($params) {
         $image = $params['image']; // Extract the id from the params array
         $_GET['t'] = $params['t'];
         $_GET['c'] = $params['c'];
@@ -443,17 +478,19 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
         return 'tables/delete_image.php'; // Return the path as a string
     });
     
-    $r->addRoute('GET', '/', function() {
+    $r->addRoute('GET', $lcl.'', function() {
         return 'tables/home.php'; // Return the path as a string
     });
 
-    $r->addRoute('GET', '/sitekeywords/view', function() {
+    $r->addRoute('GET', $lcl.'sitekeywords/view', function() {
         return 'tables/sitekeywords/view.php'; // Return the path as a string
     });
 });
 $httpMethod = $_SERVER['REQUEST_METHOD'];
+
 $uri = $_SERVER['REQUEST_URI'];
 $basePath = dirname($_SERVER['SCRIPT_NAME']);
+
 if (substr($uri, 0, strlen($basePath)) === $basePath) {
     $uri = substr($uri, strlen($basePath));
 }
@@ -463,6 +500,7 @@ if (false !== $pos = strpos($uri, '?')) {
 }
 $uri = rawurldecode($uri);
 $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
+
 switch ($routeInfo[0]) {
     case FastRoute\Dispatcher::NOT_FOUND:
         http_response_code(404);

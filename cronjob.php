@@ -3,6 +3,7 @@
 // ob_start(); 
 // date_default_timezone_set('Europe/Istanbul');
  // Create a connection
+ 
  include 'include/functions.php';
 $conn2 = new mysqli($servername, $username, $password);
 
@@ -13,10 +14,6 @@ if ($conn2->connect_error) {
 
 // Select the database
 if ($conn2->select_db($database)) {
-   
-    
-
-
 if(isset($getaction)){
     switch($getaction){
         case 'speed_cron':
@@ -35,7 +32,7 @@ if(isset($getaction)){
                 $currentDateTime = date('Y-m-d H:i:s');
                 $query = "SELECT *
                 FROM seo
-                WHERE (speed_date < updated_at OR speed_date IS NULL)
+                WHERE (updated_at < CURDATE() - INTERVAL 2 DAY) AND (speed_date < updated_at OR speed_date IS NULL)
                     AND deleted_at IS NULL
                 ORDER BY id ASC
                 LIMIT 1;";
@@ -49,7 +46,7 @@ if(isset($getaction)){
                         $_POST['speed_test'] = $speed;
                         $_POST['speed_date'] = date('Y-m-d H:i:s');
                         $_POST['updated_at'] = $row['updated_at'];
-                        include 'include\update.php';
+                        include 'include/update.php';
                         $response = json_encode(array('status' => 200, 'speed' => $speed*100,'last_updated' => $row['updated_at'] ,'last_check' => date('Y-m-d H:i:s')));
                         ob_start(); 
                         // Set the appropriate headers
@@ -67,7 +64,6 @@ if(isset($getaction)){
             if(isset($getco) && !empty($getco)){
                 if(isset($geturl) && !empty($geturl)){
                     include 'vendor/autoload.php';
-
                     include 'include/db.php';
                     $db = GetRow($getco, 'company','db', $conn);
                     if(!isset($_SESSION['username'])){
@@ -79,7 +75,7 @@ if(isset($getaction)){
                     $currentDateTime = date('Y-m-d H:i:s');
                     $query = "SELECT *
                     FROM seo
-                    WHERE (google_date < updated_at OR google_date IS NULL)
+                    WHERE (updated_at < CURDATE() - INTERVAL 2 DAY) AND (google_date < updated_at OR google_date IS NULL)
                         AND deleted_at IS NULL
                     ORDER BY id ASC
                     LIMIT 1;";
@@ -167,8 +163,8 @@ if(isset($getaction)){
             }
         break;
         case 'fixold':
+            global $DBweekname;
             if(isset($getco) && !empty($getco)){
-                
                 if(isset($conn2)){
                 $cronjob = 'cronjob';
                 if(isset($getlimit)){
@@ -183,9 +179,12 @@ if(isset($getaction)){
                 $tablename = 'course';
                 
                 $theconnection = $conn2;
-                $custom_select = "* ,TIMESTAMP(CONCAT(y1, '-', LPAD(m1, 2, '0'), '-', LPAD(d1, 2, '0'))) AS start_date, TIMESTAMP(CONCAT(y2, '-', LPAD(m2, 2, '0'), '-', LPAD(d2, 2, '0'))) AS end_date";
+
+                $custom_select = "`course`.`id`,`course_main`.`$DBweekname` ,TIMESTAMP(CONCAT(y1, '-', LPAD(m1, 2, '0'), '-', LPAD(d1, 2, '0'))) AS start_date, TIMESTAMP(CONCAT(y2, '-', LPAD(m2, 2, '0'), '-', LPAD(d2, 2, '0'))) AS end_date";
                 $custom_where = " TIMESTAMP(CONCAT(y1, '-', LPAD(m1, 2, '0'), '-', LPAD(d1, 2, '0'))) <= CURDATE()";
-                $query = "SELECT $custom_select FROM `course` WHERE $custom_where limit $limit";
+                $query = "SELECT $custom_select FROM `course` left join `course_main` on course.c_id = course_main.c_id
+                WHERE $custom_where limit $limit";
+                
                 $records = mysqli_query($conn2, $query);
                 if (mysqli_num_rows($records) > 0) { 
                     $arr = [];
@@ -200,9 +199,21 @@ if(isset($getaction)){
                             $m1 = $resultDated->format('m');
                             $d1 = $resultDated->format('d');
                             $eventDate =  $row['start_date'] ;
-                            
-                            $endDate =  date_create($row['end_date']) ;
-                            $endDate->add(new DateInterval('P52W'));
+                            switch ($row[$DBweekname]){
+                                case 2:
+                                $duration = 11;
+                                break;
+                                case 3:
+                                $duration = 17;
+                                break;
+                                case 4:
+                                $duration = 25;
+                                break;
+                                // default case is 1
+                                default: $duration = 4;
+                            }
+                            $endDate = new DateTime($resultDate);
+                            $endDate->add(new DateInterval('P' . $duration . 'D'));
                             $resultEndDate = $endDate->format('Y-m-d H:i:s');
                             $resultEndDated = new DateTime($resultEndDate);
                             $y2 = $resultEndDated->format('Y');
@@ -222,10 +233,11 @@ if(isset($getaction)){
 
                             include 'include/update.php';
                             $arr['data'][] = ['db' => $database,'id' => $id,'data'=>[
-                                'start_date' => $row['start_date'],
-                                'new_start_date' => $resultDate,
-                                'end_date' => $row['end_date'],
-                                'new_end_date' => $resultEndDate,
+                                'start_date' => date("Y-m-d",strtotime($row['start_date'])),
+                                'new_start_date' => date("Y-m-d",strtotime($resultDate)),
+                                'end_date' => date("Y-m-d",strtotime($row['end_date'])),
+                                'new_end_date' => date("Y-m-d",strtotime($resultEndDate)),
+                                'duration' => $duration,
                                 'updated_at' => date('Y-m-d H:i:s')
                             ]];
                         }

@@ -17,7 +17,67 @@
     $m2 = $end[1];
     $y2 = $end[0];
 
-     $sql = "UPDATE course SET c_id = '$c_id', city = '$city', price = '$price', d1 = '$d1', m1 = '$m1', y1 = '$y1', d2 = '$d2', m2 = '$m2', y2 = '$y2' WHERE id = '$id'";
+
+    switch($_SESSION['db_name']){
+        case 'agile4training':
+            $DBweekname = 'week';
+            $newdbstype = true;
+        break;
+        case 'agile4training ar':
+            $DBweekname = 'week';
+            $newdbstype = true;
+        break;
+        case 'blackbird-training':
+            $DBweekname = 'weeks';
+            $newdbstype = false;
+        break;
+        case 'blackbird-training.co.uk':
+            $DBweekname = 'week';
+            $newdbstype = true;
+        break;
+        case 'mercury english':
+            $DBweekname = 'week';
+            $newdbstype = false;
+        break;
+        case 'mercury arabic':
+            $DBweekname = 'week';
+        break;
+        case 'Euro Wings En':
+            $DBweekname = 'weeks';
+            $newdbstype = false;
+        break;
+        case 'Euro Wings Ar':
+            $DBweekname = 'weeks';
+            $newdbstype = false;
+        break;
+        default:
+        $DBweekname = 'week';
+        $newdbstype = false;
+        break;
+    }
+
+    $sql = "SELECT $DBweekname FROM course LEFT JOIN course_main ON course_main.c_id=course.c_id WHERE course.id = '$id'";
+    $result = mysqli_query($conn2, $sql);
+    if($result){
+        $row = mysqli_fetch_assoc($result);
+        switch ($row[$DBweekname]){
+            case 2:
+            $daysdration = 11;
+            break;
+            case 3:
+            $daysdration = 17;
+            break;
+            case 4:
+            $daysdration = 25;
+            break;
+            // default case is 1
+            default: $daysdration = 4;
+        }
+    }
+    $sql = "UPDATE course SET c_id = '$c_id', city = '$city', price = '$price', d1 = '$d1', m1 = '$m1', y1 = '$y1', 
+    d2 = DAY(DATE_ADD(CONCAT($y1, '-', $m1, '-', $d1), INTERVAL $daysdration DAY)),
+    m2 = MONTH(DATE_ADD(CONCAT($y1, '-', $m1, '-', $d1), INTERVAL $daysdration DAY)),
+    y2 = YEAR(DATE_ADD(CONCAT($y1, '-', $m1, '-', $d1), INTERVAL $daysdration DAY)) WHERE id = '$id'";
     $result = mysqli_query($conn2, $sql);
     if($result){
         
@@ -65,4 +125,4 @@
     }
 
 ?>
-<meta http-equiv="refresh" content="0;url=/course-factory/event/fixduplicate" />
+<meta http-equiv="refresh" content="0;url=/event/fixduplicate" />

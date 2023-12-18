@@ -6,11 +6,18 @@ $getaction = 'fixold';
 $getco = 6;
 $getlimit =200;
 $geturl = $_GET['url'] ?? null;
-
+if ($_SERVER['HTTP_HOST']=='localhost' || $_SERVER['HTTP_HOST']=='mercuryt.mercury-training.local' || $_SERVER['HTTP_HOST']=='192.168.5.141'){
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $database = "eurowings_ar";
+    $DBweekname = 'weeks';
+}else{
 $servername = "eurowingstraining.com";
 $username = "eurowings_ew_ar";
 $password = '97[UXwFLM@0,';
-$database = "eurowing_ar";
-
+$database = "eurowings_ar";
+$DBweekname = 'weeks';
+}
 include 'cronjob.php';
 ?>

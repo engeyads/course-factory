@@ -1,4 +1,30 @@
+document.addEventListener("DOMContentLoaded", function() {
+    // Show loading overlay
+    document.getElementById("loading-overlay").style.display = "flex";
 
+    // Simulate some asynchronous operation (replace this with your actual code)
+    setTimeout(function() {
+        // Your theme and local storage operations go here
+        // For example, set theme and local storage items
+
+        // Simulate some additional asynchronous operation (replace this with your actual code)
+        setTimeout(function() {
+            // Hide loading overlay
+            const loadingOverlay = document.getElementById("loading-overlay");
+
+            // Fade out the loading overlay smoothly
+            loadingOverlay.style.opacity = 0;
+
+            // After the transition, hide the loading overlay
+            loadingOverlay.addEventListener("transitionend", function() {
+                loadingOverlay.style.display = "none";
+            }, { once: true });
+
+            // Show content
+            // document.getElementById("content").style.display = "block";
+        }, 100); // Simulating 2 seconds of additional work
+    }, 100); // Simulating 2 seconds of work
+});
 
 $(function() {
 	"use strict";

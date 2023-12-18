@@ -40,7 +40,7 @@ if ($_SESSION['userlevel'] > 2 ) {
     FormsText('description','description', 'text','published_at', false, 'col-6') ;
     FormsEditor('overview','Text', 'text', 'true', 'col-12  ') ;
     FormsEditor('broshoure','Broshoure', 'text', 'true', 'col-12  ') ;    
-    FormsDateTime('published_at','Publish Date And Time', false, 'col-6') ;
+    FormsDateTimeNew('published_at','Publish Date And Time', false, 'col-6') ;
     FormsEnd(); 
                 
     

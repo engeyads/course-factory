@@ -217,7 +217,7 @@ $updateNewCourse = "UPDATE `course_main` SET `done` = CURDATE() WHERE `course_ma
         $cid = $c_id['c_id'];
         
     }else{
-        echo "no course with this id<br><button class='btn btn-primary float-right justify-content-end' onclick='window.location.href = \"/course-factory/event/addmultiple/\"'>Go To Add Multiple Events</button>";
+        echo "no course with this id<br><button class='btn btn-primary float-right justify-content-end' onclick='window.location.href = \"/event/addmultiple/\"'>Go To Add Multiple Events</button>";
         exit;
     }
 }
@@ -257,7 +257,7 @@ $updateNewCourse = "UPDATE `course_main` SET `done` = CURDATE() WHERE `course_ma
     function nextPage(){
         echo "<script>
                 setTimeout(function() {
-                    window.location.href = '/course-factory/event/addmultiplecron/';
+                    window.location.href = '/event/addmultiplecron/';
                 }, 3000); // Wait for 3000 milliseconds (3 seconds) before redirecting
             </script>";
     }

@@ -8,12 +8,43 @@ if ($_SESSION['userlevel'] > 2 ) {
     $query = "SELECT $custom_select FROM `course` left join `course_main` on course.c_id = course_main.c_id
     WHERE $custom_where limit 25";
     $records = mysqli_query($conn2, $query);
+
+    $custom_select = "count(*) as row_count ";
+    $custom_where = " TIMESTAMP(CONCAT(y1, '-', LPAD(m1, 2, '0'), '-', LPAD(d1, 2, '0'))) <= CURDATE()";
+    $query1 = "SELECT $custom_select FROM `course` left join `course_main` on course.c_id = course_main.c_id
+    WHERE $custom_where";
+    $cnt = mysqli_query($conn2, $query1);
+
     // if mysqli_num_rows($records) > 0
-?>
+?><?php if($cnt){ $cnt=mysqli_fetch_assoc($cnt)['row_count']; if( $cnt > 0){ ?>
+    <div class="alert border-0 bg-light-warning alert-dismissible fade show py-2">
+        <div class="d-flex align-items-center">
+            <div class="fs-3 text-warning"><i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <div class="ms-3">
+            <div class="text-warning"> <?php  echo "Found ".$cnt; ?> !! ,Please Report this to System Admin!</div>
+            </div>
+        </div>
+        </div>
+        <?php }else{ ?>
+        <div class="alert border-0 bg-light-success alert-dismissible fade show py-2">
+        <div class="d-flex align-items-center">
+            <div class="fs-3 text-success"><i class="bi bi-check-circle-fill"></i>
+            </div>
+            <div class="ms-3">
+            <div class="text-success">Everything is ok! keep going.</div>
+            </div>
+        </div>
+        </div>
+        <?php }} ?>
 <?php if (mysqli_num_rows($records) > 0) { ?>
+
+    
         <div class="card">
             <div class="card-body">
-                <h2>Found Doplicated Events</h2>
+                <h2>Found old Events</h2>
+
+                    
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered dataTable no-footer display dataTable" role="grid">
                         <thead>
@@ -68,12 +99,12 @@ if ($_SESSION['userlevel'] > 2 ) {
                                     //mysqli_query($conn2, $sql);
                                     //mysqli_commit($conn2);
                                     ?><td><?php
-                                    if (mysqli_affected_rows($conn2) > 0) {
-                                        echo "✅";
-                                    } else {
-                                        echo "❌";
-                                    }
-                                    ?></td></tr><?php
+                                    // |if (mysqli_affected_rows($conn2) > 0) {
+                                    //     echo "✅";
+                                    // } else {
+                                    //     echo "❌";
+                                    // }
+                                    ?>⚠️ report only not updated!</td></tr><?php
                                 }
                             ?>
                         </tbody>
@@ -87,6 +118,11 @@ if ($_SESSION['userlevel'] > 2 ) {
         echo "Date after adding 52 weeks: " . $resultDate . PHP_EOL;
     }else{
     echo "<h1>All events are up to date.</h1>";
+    }
+    if ($_SESSION['userlevel'] > 9 ) {
+        $adminajaxview = true;
+        $tablename = 'course';
+        include 'include/logview.php';
     }
 ?>
 <?php

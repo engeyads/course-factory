@@ -12,10 +12,31 @@ if(!isset($maxlenginfield)) { $maxlenginfield = '';    }
 if(!isset($theconnection))  {  $theconnection = '';    }
 if(!isset($thedbname))      {      $thedbname = '';    }
 if(!isset($no_edits))       {       $no_edits = 0;     }
+if(!isset($no_link))        {       $no_link = 0;      }
 if(!isset($pagelength))     {     $pagelength = 100;   }
 if(!isset($imagePaths))     {     $imagePaths = [''];  }
+if(!isset($urlPath))        {     $urlPath = null;     }
 if(!isset($withEventCid))   {   $withEventCid = false; }
-if(!isset($searchColumns))   {   $searchColumns = false; }
+if(!isset($searchsColumns)) { $searchsColumns = false; }
+if(!isset($pageend))        {       $pageend = '';     }
+if(!isset($dashedname))     {   $dashedname = false;   }
+if(!isset($editPath))     {   $editPath = false;   }
+
+// Check if the 'category' parameter exists in the GET request
+$allowedParameters = ['category', 'city', 'upcomming','monday'];
+$searchColumns = [];
+
+foreach ($allowedParameters as $param) {
+    if (isset($_GET[$param]) && $_GET[$param] !== '0') {
+        $searchColumns[$param] = $_GET[$param];
+    }
+}
+// ... add more conditions for other table names if needed
+
+// Check if $searchColumns is empty (no parameters were provided)
+if (empty($searchColumns)) {
+    $searchColumns = false;
+}
 $ignoredColumnsDB = $ignoredColumnsDB ?? []; 
 $additionalColumns = $additionalColumns ?? [];
 $result = checkTableColumns($tablename, $theconnection);
@@ -30,7 +51,6 @@ if ($columnResult) {
     // Add additional columns to the columnNames array
     $columnNames = array_merge($columnNames, $additionalColumns);
 } else {
-    
     echo "Error: " . mysqli_error($theconnection);
 }
 if (isset($costumeQuery) && !empty($costumeQuery)) {
@@ -38,11 +58,14 @@ if (isset($costumeQuery) && !empty($costumeQuery)) {
 } else {
     $contentQuery = "SELECT * FROM $tablename";
 };
-$contentResult = mysqli_query($theconnection, $contentQuery);
-if ($contentResult) {
-    $contents = mysqli_fetch_all($contentResult, MYSQLI_ASSOC);
-} else {
-    echo "Error: " . mysqli_error($theconnection);
+
+if(!$ajaxview){
+    $contentResult = mysqli_query($theconnection, $contentQuery);
+    if ($contentResult) {
+        $contents = mysqli_fetch_all($contentResult, MYSQLI_ASSOC);
+    } else {
+        echo "Error: " . mysqli_error($theconnection);
+    }
 }
 $columnNames = array_diff($columnNames, $ignoredColumns);  // Remove ignored columns for table generation
 $columnNameDisplay = str_replace('_', ' ', array_map('ucwords', $columnNames));
@@ -79,41 +102,103 @@ if (isset($_POST['message'])) {
     <div class="col-10 d-inline-flex">
 
         <?php if(isset($custom_buttons) && is_array($custom_buttons) && count($custom_buttons) > 0){ 
-            $values = [0, 3, 6,12 ]; ?>
+            $values = [0, 3, 6, 12]; ?>
             <div class="custom_buttons col-<?php echo $values[count($custom_buttons)]; ?> ">
             <?php foreach($custom_buttons as $custom_button){ ?>
-                <?php if($custom_button->type == 'upload' ){ ?>
+                <?php if($custom_button->type == 'accordion'){ ?>
+                    <div class="accordion accordion-flush" id="<?php echo $custom_button->containerid ?>">
+                      <div class="accordion-item">
+                        <?php echo isset($custom_button->heading) ? "<h$custom_button->heading class='accordion-header' id='".$custom_button->id."'>" : "<h1 class='accordion-header' id='".$custom_button->id."'>" ?>
+                          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#<?php echo $custom_button->acid ?>" aria-expanded="true" aria-controls="<?php echo $custom_button->acid ?>">
+                            <?php echo $custom_button->lable ?>
+                          </button>
+                        <?php echo isset($custom_button->heading) ? "</h$custom_button->heading>" : "</h1>" ?>
+                        <div id="<?php echo $custom_button->acid ?>" class="accordion-collapse collapse show" aria-labelledby="flush-headingOne" data-bs-parent="#<?php echo $custom_button->containerid ?>" style="">
+                          <div class="accordion-body">
+
+                <?php }elseif($custom_button->type == 'accordionend'){ ?>
+                                </div>
+                        </div>
+                      </div>
+                      
+                    </div>
+                            
+                <?php }elseif($custom_button->type == 'h' ){ ?>
+                    <?php if(isset($custom_button->subdiv) ){ if($custom_button->subdiv == 'true' ){ ?>
+                        <div class="d-inline-flex col-<?php echo isset($custom_button->size) ? $custom_button->size : 6 ?>">
+                    <?php }} ?>
+                    <div class="input-group mb-6">
+                        <?php echo isset($custom_button->heading) ? "<h$custom_button->heading>" : "<h1>" ?> <?php echo $custom_button->lable; ?> <?php echo isset($custom_button->heading) ? "</h$custom_button->heading>" : "</h1>" ?>
+                    </div>
+                    <?php if(isset($custom_button->subdiv) ){ if($custom_button->subdiv == 'true' ){ ?>
+                        </div>
+                    <?php }} ?>
+                <?php }else if($custom_button->type == 'upload' ){ ?>
+                    <?php if(isset($custom_button->subdiv) ){ if($custom_button->subdiv == 'true' ){ ?>
+                        <div class="d-inline-flex col-<?php echo isset($custom_button->size) ? $custom_button->size : 6 ?>">
+                    <?php }} ?>
                     <div class="input-group mb-6">
                         <button class="btn btn-primary" type="button" data-action="<?php echo $custom_button->action; ?>">Upload <?php echo $custom_button->name; ?> </button>
                         <input class="form-control" type="file" id="<?php echo $custom_button->id; ?>">
                     </div>
+                    <?php if(isset($custom_button->subdiv) ){ if($custom_button->subdiv == 'true' ){ ?>
+                        </div>
+                    <?php }} ?>
                 <?php }else if($custom_button->type == 'input' ){ ?>
+                    <?php if(isset($custom_button->subdiv) ){ if($custom_button->subdiv == 'true' ){ ?>
+                        <div class="d-inline-flex col-<?php echo isset($custom_button->size) ? $custom_button->size : 6 ?>">
+                    <?php }} ?>
                     <div class="input-group mb-6">
                         <button class="btn btn-primary" type="button" data-action="<?php echo $custom_button->action; ?>"><?php echo $custom_button->name; ?> </button>
                         <?php if(isset($custom_button->kind) && $custom_button->kind !== ''){ ?><span class="input-group-text" id="basic-addon1"><?php echo $custom_button->kind; ?></span><?php } ?>
                         <input class="form-control" type="text" id="<?php echo $custom_button->id; ?>">
                     </div>
+                    <?php if(isset($custom_button->subdiv) ){ if($custom_button->subdiv == 'true' ){ ?>
+                        </div>
+                    <?php }} ?>
                 <?php }else if($custom_button->type == 'a' ){ ?>
+                    <?php if(isset($custom_button->subdiv) ){ if($custom_button->subdiv == 'true' ){ ?>
+                        <div class="d-inline-flex col-<?php echo isset($custom_button->size) ? $custom_button->size : 6 ?>">
+                    <?php }} ?>
                     <div class="input-group mb-6">
                     <a id="<?php echo $custom_button->id; ?>" href="<?php echo $custom_button->action ?>" class="btn btn-primary <?php $custom_button->class ?>"><?php echo $custom_button->name ?></a>
                     </div>
+                    <?php if(isset($custom_button->subdiv) ){ if($custom_button->subdiv == 'true' ){ ?>
+                    </div>
+                    <?php }} ?>
                 <?php } else if ($custom_button->type == 'select') { ?>
+                    <?php if(isset($custom_button->subdiv) ){ if($custom_button->subdiv == 'true' ){ ?>
+                        <div class="d-inline-flex col-<?php echo isset($custom_button->size) ? $custom_button->size : 6 ?>">
+                    <?php }} ?>
                 <!-- New code for handling select type -->
-                <div class="input-group mb-6">
-                    <label for="<?php echo $custom_button->id; ?>" class="input-group-text"><?php echo $custom_button->name; ?></label>
-                    <select class="form-select" id="<?php echo $custom_button->id; ?>">
-                    <option value="" selected >Select a <?php echo $custom_button->name; ?></option>
-                        <?php foreach ($custom_button->options as $key => $value) { ?>
-                            <option value="<?php echo $key; ?>"><?php echo $value; ?></option>
-                        <?php } ?>
-                    </select>
-                    <?php if (isset($custom_button->kind) && $custom_button->kind !== '') { ?>
-                        <span class="input-group-text" id="basic-addon1"><?php echo $custom_button->kind; ?></span>
-                    <?php } ?>
-                    <button class="btn btn-primary <?php echo $custom_button->class; ?>" type="button" data-action="<?php echo $custom_button->action; ?>"><?php echo $custom_button->name; ?></button>
-                </div>
+        <div class="input-group mb-6 m-1 ">
+            <label for="<?php echo $custom_button->id; ?>" class="input-group-text d-none d-lg-block"><?php echo $custom_button->lable; ?></label>
+            <!-- Assuming this is inside your loop for generating select elements -->
+            <select class="single-select form-select float-right justify-content-end table-select" id="<?php echo $custom_button->id; ?>" data-table="<?php echo $custom_button->id; ?>">
+    <!-- Default option -->
+    <option value="0" <?php if($custom_button->selected == ''){ echo 'selected'; } ?>>Select <?php echo $custom_button->name; ?></option>
+    
+    <!-- Options for <?php echo $custom_button->name; ?> -->
+    <?php foreach ($custom_button->options as $key => $value) { ?>
+        <option value="<?php echo $key; ?>" <?php if($custom_button->selected == $key){ echo 'selected'; } ?>><?php echo $value; ?></option>
+    <?php } ?>
+</select>
+            <?php if (isset($custom_button->kind) && $custom_button->kind !== '') { ?>
+                <span class="input-group-text" id="basic-addon1"><?php echo $custom_button->kind; ?></span>
+            <?php } ?>
+            <!-- <button class="btn btn-primary " type="button" data-action="<?php //echo $custom_button->action; ?>" data-table="<?php //echo $custom_button->id; ?>"><?php //echo $custom_button->name; ?></button> -->
+        </div>
+                <?php if(isset($custom_button->subdiv) ){ if($custom_button->subdiv == 'true' ){ ?>
+                    </div>
+                <?php }} ?>
                 <?php }else if($custom_button->type == 'button' ){ ?>
+                    <?php if(isset($custom_button->subdiv) ){ if($custom_button->subdiv == 'true' ){ ?>
+                        <div class="d-inline-flex col-<?php echo isset($custom_button->size) ? $custom_button->size : 6 ?>">
+                    <?php }} ?>
                     <button class="btn btn-primary" data-action="<?php echo $custom_button->action ?>"><?php echo $custom_button->name ?></button>
+                    <?php if(isset($custom_button->subdiv) ){ if($custom_button->subdiv == 'true' ){ ?>
+                    </div>
+                    <?php }} ?>
                 <?php } ?>
             <?php } ?>
             </div>
@@ -163,7 +248,9 @@ if (isset($_POST['message'])) {
                         }
                     } 
                     ?>
-                        <?php if($no_edits != true){ ?>
+                    <?php if($no_link != true){ ?>
+                        <th>Link</th>
+                        <?php } if($no_edits != true){ ?>
                         <th>Edit</th>
                         <?php
                         if ($_SESSION['userlevel'] > 2 ) {
@@ -202,7 +289,7 @@ if (isset($_POST['message'])) {
                         'X-Requested-Session': '<?php echo session_id(); ?>'
                     },
                     'ajax': {
-                        'url':'/course-factory/include/ajaxfile.php',
+                        'url':'/include/ajaxfile.php',
                         'data': function (data) {
                             data.start = data.start;
                             data.length = data.length;
@@ -220,6 +307,8 @@ if (isset($_POST['message'])) {
                             <?php if (isset($folderName)) { ?>data.folderName = '<?php echo $folderName; ?>';<?php } ?>
 
                             <?php if (isset($editslug)) { ?>data.editslug = '<?php echo $editslug; ?>';<?php } ?>
+
+                            <?php if (isset($editPath)) { ?>data.editPath = '<?php echo $editPath; ?>';<?php } ?>
                             
                             <?php if (isset($trashslug)) { ?>data.trashslug = '<?php echo $trashslug; ?>';<?php } ?>
                             
@@ -227,11 +316,17 @@ if (isset($_POST['message'])) {
                             
                             <?php if (isset($excludesearch)) { ?>data.excludesearch = "<?php echo implode(',', $excludesearch); ?>";<?php } ?>
                             
-                            <?php if (isset($searchColumns)) { ?>data.searchColumns = <?php echo json_encode($searchColumns); ?>;<?php } ?>
+                            <?php if (isset($searchsColumns)) { if($searchsColumns != false){ ?>data.searchsColumns = <?php echo json_encode($searchsColumns); ?>;<?php }} ?>
 
                             <?php if (isset($urlPaths)) { ?>data.urlPaths = <?php echo json_encode($urlPaths); ?>;<?php } ?>
+
+                            <?php if ($urlPath != null) { ?>data.urlPath = '<?php echo $urlPath; ?>';<?php } ?>
                             
                             <?php if (isset($urlslug)) { ?>data.urlslug = '<?php echo $urlslug; ?>';<?php } ?>
+
+                            <?php if (isset($pageend)) { ?>data.pageend = '<?php echo $pageend; ?>';<?php } ?>
+
+                            <?php if (isset($dashedname)) { ?>data.dashedname = '<?php echo $dashedname; ?>';<?php } ?>
 
                             <?php if (isset($costumeQuery)) { ?>data.costumeQuery = "<?php echo str_replace(array("\r", "\n", "\t"), ' ', $costumeQuery); ?>";<?php } ?>
 
@@ -249,7 +344,9 @@ if (isset($_POST['message'])) {
                             
                             <?php if (isset($gsc)) { ?>data.gsc = <?php echo json_encode($gsc); ?>;<?php } ?>
 
-                            <?php if (isset($no_edits) && $no_edits == true) { ?>data.noedits = <?php echo $no_edits; ?>;<?php } ?>
+                            <?php if ($no_edits == true) { ?>data.noedits = <?php echo $no_edits; ?>;<?php } ?>
+
+                            <?php if ($no_link == true) { ?>data.nolink = <?php echo $no_link; ?>;<?php } ?>
 
                             <?php if (isset($withEventCid) && $withEventCid == true) { ?>data.withEventCid = <?php echo $withEventCid; ?>;<?php } ?>
                         }
@@ -258,7 +355,8 @@ if (isset($_POST['message'])) {
                     'columns': [
 <?php foreach ($columnNames as $columnName){ ?>
                         { data: '<?php echo $columnName ?>'},
-<?php } ?>
+<?php } if($no_link !=true){ ?>
+                        { data: 'Link'},<?php } ?>
                         { data: 'Edit'},
 <?php if ($_SESSION['userlevel'] > 2 ) { ?>
                         { data: 'Trash'},
@@ -272,7 +370,20 @@ if (isset($_POST['message'])) {
         pageLength: 25,
 dom: 'lBfrtip',
         buttons: [
-            'copy', 'excel', 'pdf', 'print'
+            'copy','excel' //{
+                // extend: 'excel',
+                // exportOptions: {
+                //     columns: [<?php //foreach ($columnNamesdisplay as $columnName){ ?>'<?php //echo $columnName ?>', <?php //} ?>] 
+                // }
+            //}
+            , 'pdf', 'print'
+        ],
+        columnDefs: [
+            {
+                targets: ['Edit', 'Trash', 'Delete'], // Column names you want to hide
+                visible: false,
+                searchable: false
+            }
         ]
                 });
             });
@@ -294,7 +405,9 @@ dom: 'lBfrtip',
                         }
                     } 
                     ?>
-                        <?php if($no_edits != true ){ ?>
+                    <?php if($no_link != true ){ ?>
+                        <th>Link</th>
+                        <?php } if($no_edits != true ){ ?>
                         <th>Edit</th>
                         <?php
                         if ($_SESSION['userlevel'] > 2 ) {
@@ -607,7 +720,7 @@ function showPopup(content,subject) {
       }
     };
 
-    xhr.open('GET', '/course-factory/<?php echo $folderName; ?>/<?php echo $deleteslug ; ?>/'+id, true);
+    xhr.open('GET', '/<?php echo $folderName; ?>/<?php echo $deleteslug ; ?>/'+id, true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.send();
   }

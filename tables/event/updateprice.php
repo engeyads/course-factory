@@ -7,8 +7,13 @@
         $city = $_POST['city'];
         $class = $_POST['class'];
         $week = $_POST[$DBweekname];
-        $citypricecell = 'w'.$week.'_p'.(strtolower($class) == 'a' ? '' : '_'.strtolower($class));
-        $cityprice = $_POST[$citypricecell];
+        if($week >0 && $week <=4){
+            $citypricecel = 'w'.$week.'_p'.(strtolower($class) == 'a' ? '' : '_'.strtolower($class));
+            $cityprice = $_POST[$citypricecel];
+            $citypricecell = 'cities.w'.$week.'_p'.(strtolower($class) == 'a' ? '' : '_'.strtolower($class)).' = '.$cityprice;
+        }else{
+            $citypricecell = ' 1 ';
+        }
         echo $sql = "UPDATE course
         LEFT JOIN course_main ON course_main.c_id = course.c_id
         LEFT JOIN course_c ON course_c.id = course_main.course_c
@@ -18,7 +23,7 @@
           AND course_c.class = '$class'
           AND $DBweekname = '$week'
           AND course.price=$price
-          AND cities.$citypricecell = $cityprice
+          AND $citypricecell
           AND y1=$year;";
         $result = mysqli_query($conn2, $sql);
         if($result){

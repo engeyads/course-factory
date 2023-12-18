@@ -71,7 +71,7 @@ $lastPart = end($parts);
     
     FormsText('description','Description', 'text','published_at', false, 'col-6', 10, false,110,160, true, $descPrompt,$system ='') ;
     FormsEditor('text','Text', 'text', 'true', 'col-12  ') ;
-    FormsDateTime('published_at','Publish Date And Time', false, 'col-6') ;
+    FormsDateTimeNew('published_at','Publish Date And Time', false, 'col-6') ;
     FormsEnd(); 
 }else{
     ?>

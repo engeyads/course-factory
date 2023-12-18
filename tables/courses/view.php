@@ -7,61 +7,78 @@ $ajaxview= true;
     switch ($db_name) {
         case "agile4training":
             $ignoredColumns = ['description', 'keyword', 'text','s_alias', 'deleted_at','publish','like','done','tags','cource_cc','certain','price','objective','who_should_attend','code', 'out_lines','out_lines2','name_file','Arabic','Certified','conference','top','clean','aside','hidden','accreditation','broshoure','overview'];
-            $tooltips = [ 'course_c','name', 'title', 'subtitle' , 'sub_title'];
+            $tooltips = [ 'course_c', 'title', 'subtitle' , 'sub_title'];
             $popups = [ 'description', 'keyword', 'text','about','overview','broshoure','ar_overview','ar_broshoure','ar_about','ar_text','ar_description'];
             $jsonarrays = ['keyword','ar_keyword'];
-            $urlPaths = ['name' => 's_alias'];
+            $urlPaths = [];
+            $editPath = 'name';
+            $urlPath = 's_alias';
+            // $no_link = true;
+            // $no_edits = true;
             $fieldTitles = ['c_id' => 'Course ID' ,'course_c' => 'Category', 'sub_title' => 'Sub Title', 'sh' => 'Short', 'created_at' => 'Created', 'updated_at' => 'Updated' , 'published_at' => 'Publish'];
             $dateColumns = ['created_at', 'updated_at','published_at']; // replace with your actual date columns
-            $urlslug = '';
+            // $urlslug = '';
             $imagePaths = ['image' => $courseimgurl];
             
             break;
         case "agile4training ar":
             $ignoredColumns = ['description', 'keyword', 'text','s_alias', 'deleted_at','publish','like','done','tags','cource_cc','certain','price','objective','who_should_attend','code', 'out_lines','out_lines2','name_file','Arabic','Certified','conference','top','clean','aside','hidden','accreditation','broshoure','overview'];
-            $tooltips = [ 'course_c','name', 'title', 'subtitle' , 'sub_title'];
+            $tooltips = [ 'course_c', 'title', 'subtitle' , 'sub_title'];
             $popups = [ 'description', 'keyword', 'text','about','overview','broshoure','ar_overview','ar_broshoure','ar_about','ar_text','ar_description'];
             $jsonarrays = ['keyword','ar_keyword'];
-            $urlPaths = ['name' => 's_alias'];
+            $urlPaths = [];
+            $editPath = 'name';
+            $urlPath = 's_alias';
+            // $no_link = false;
+            // $no_edits = false;
             $fieldTitles = ['c_id' => 'Course ID' ,'course_c' => 'Category', 'sub_title' => 'Sub Title', 'sh' => 'Short', 'created_at' => 'Created', 'updated_at' => 'Updated' , 'published_at' => 'Publish'];
             $dateColumns = ['created_at', 'updated_at','published_at']; // replace with your actual date columns
-            $urlslug = '';
+            // $urlslug = '';
             $imagePaths = ['image' => $courseimgurl];
             
             break;
         case "blackbird-training":
             $ignoredColumns = ['s_alias', 'deleted_at','publish','like','done','tags','cource_cc','certain','price','objective','who_should_attend','code', 'out_lines','out_lines2','name_file','Arabic','Certified','conference','top','clean','aside','hidden','accreditation','broshoure','overview'];
-            $tooltips = [ 'course_c','name', 'title', 'subtitle' , 'sub_title'];
+            $tooltips = [ 'course_c', 'title', 'subtitle' , 'sub_title'];
             $popups = [ 'description', 'keyword', 'text','about','overview','broshoure','ar_overview','ar_broshoure','ar_about','ar_text','ar_description'];
             $jsonarrays = ['keyword','ar_keyword'];
-            $urlPaths = ['name' => 's_alias'];
+            $urlPaths = [];
+            $editPath = 'name';
+            $urlPath = 'name';
+            // $no_link = false;
             $fieldTitles = ['c_id' => 'Course ID' ,'course_c' => 'Category', 'sub_title' => 'Sub Title', 'sh' => 'Short', 'created_at' => 'Created', 'updated_at' => 'Updated' , 'published_at' => 'Publish'];
             $dateColumns = ['created_at', 'updated_at','published_at']; // replace with your actual date columns
-            $urlslug = '';
+            // $urlslug = '';
             $imagePaths = [];
             
             break;
         case "blackbird-training.co.uk":
             $ignoredColumns = ['keyword','keywords','description','created','s_alias', 'deleted_at','publish','like','done','tags','cource_cc','certain','price','objective','who_should_attend','code', 'out_lines','out_lines2','name_file','Arabic','Certified','conference','top','clean','aside','hidden','accreditation','Keyword','broshoure','overview'];
-            $tooltips = [ 'course_c','name', 'title', 'subtitle' , 'sub_title'];
+            $tooltips = [ 'course_c', 'title', 'subtitle' , 'sub_title'];
             $popups = [ 'description', 'keywords', 'text','about','overview','broshoure','ar_overview','ar_broshoure','ar_about','ar_text','ar_description'];
             $jsonarrays = ['keywords','ar_keyword'];
-            $urlPaths = ['name' => 's_alias'];
+            $urlPaths = [];
+            $editPath = 'name';
+            $urlPath = 's_alias';
+            // $no_link = false;
             $fieldTitles = ['c_id' => 'Course ID' ,'course_c' => 'Category', 'sub_title' => 'Sub Title', 'sh' => 'Short', 'created_at' => 'Created', 'updated_at' => 'Updated' , 'published_at' => 'Publish'];
             $dateColumns = ['created_at', 'updated_at','published_at']; // replace with your actual date columns
-            $urlslug = '';
+            // $urlslug = '';
             $imagePaths = [];
             
             break;
         case "mercury_dubai":
             $ignoredColumns = ['s_alias', 'deleted_at','publish','like','done','tags','cource_cc','certain','price','objective','who_should_attend','code', 'out_lines','out_lines2','name_file','Arabic','Certified','conference','top','clean','aside','hidden','accreditation','broshoure','overview'];
-            $tooltips = [ 'course_c','name', 'title', 'subtitle' , 'sub_title'];
+            $tooltips = [ 'course_c', 'title', 'subtitle' , 'sub_title'];
             $popups = [ 'description', 'keyword', 'text','about','overview','broshoure','ar_overview','ar_broshoure','ar_about','ar_text','ar_description'];
             $jsonarrays = ['keyword','ar_keyword'];
-            $urlPaths = ['name' => 's_alias'];
+            $urlPaths = [];
+            $editPath = 'name';
+            $urlPath = 'c_id';
+            // $no_link = false;
             $fieldTitles = ['c_id' => 'Course ID' ,'course_c' => 'Category', 'sub_title' => 'Sub Title', 'sh' => 'Short', 'created_at' => 'Created', 'updated_at' => 'Updated' , 'published_at' => 'Publish'];
             $dateColumns = ['created_at', 'updated_at','published_at']; // replace with your actual date columns
-            $urlslug = '';
+            // $urlslug = '';
             $imagePaths = [];
             
             break;
@@ -71,45 +88,57 @@ $ajaxview= true;
             $popups = [ 'description', 'keyword', 'text','about','overview','broshoure','ar_overview','ar_broshoure','ar_about','ar_text','ar_description'];
             $jsonarrays = ['keyword','ar_keyword'];
             $urlPaths = [];
+            $editPath = 'name';
+            $urlPath = 'c_id';
+            // $no_link = false;
             $fieldTitles = ['c_id' => 'Course ID' ,'course_c' => 'Category', 'sub_title' => 'Sub Title', 'sh' => 'Short', 'created_at' => 'Created', 'updated_at' => 'Updated' , 'published_at' => 'Publish'];
             $dateColumns = ['created_at', 'updated_at','published_at']; // replace with your actual date columns
-            $urlslug = '';
+            // $urlslug = '';
             $imagePaths = [];
             
             break;
         case "mercury english":
             $ignoredColumns = ['s_alias', 'deleted_at','publish','like','done','tags','cource_cc','certain','price','objective','who_should_attend','code', 'out_lines','out_lines2','name_file','Arabic','Certified','conference','top','clean','aside','hidden','accreditation','broshoure','overview'];
-            $tooltips = [ 'course_c','name', 'title', 'subtitle' , 'sub_title'];
+            $tooltips = [ 'course_c', 'title', 'subtitle' , 'sub_title'];
             $popups = [ 'description', 'keyword', 'text','about','overview','broshoure','ar_overview','ar_broshoure','ar_about','ar_text','ar_description'];
             $jsonarrays = ['keyword','ar_keyword'];
-            $urlPaths = ['name' => 's_alias'];
+            $urlPaths = [];
+            $editPath = 'name';
+            $urlPath = 'c_id';
+            // $no_link = false;
             $fieldTitles = ['c_id' => 'Course ID' ,'course_c' => 'Category', 'sub_title' => 'Sub Title', 'sh' => 'Short', 'created_at' => 'Created', 'updated_at' => 'Updated' , 'published_at' => 'Publish'];
             $dateColumns = ['created_at', 'updated_at','published_at']; // replace with your actual date columns
-            $urlslug = '';
+            // $urlslug = '';
             $imagePaths = [];
             
             break;
         case "mercury-training":
             $ignoredColumns = ['s_alias', 'deleted_at','publish','like','done','tags','cource_cc','certain','price','objective','who_should_attend','code', 'out_lines','out_lines2','name_file','Arabic','Certified','conference','top','clean','aside','hidden','accreditation','broshoure','overview'];
-            $tooltips = [ 'course_c','name', 'title', 'subtitle' , 'sub_title'];
+            $tooltips = [ 'course_c', 'title', 'subtitle' , 'sub_title'];
             $popups = [ 'description', 'keyword', 'text','about','overview','broshoure','ar_overview','ar_broshoure','ar_about','ar_text','ar_description'];
             $jsonarrays = ['keyword','ar_keyword'];
-            $urlPaths = ['name' => 's_alias'];
+            $urlPaths = [];
+            $editPath = 'name';
+            $urlPath = 'c_id';
+            // $no_link = false;
             $fieldTitles = ['c_id' => 'Course ID' ,'course_c' => 'Category', 'sub_title' => 'Sub Title', 'sh' => 'Short', 'created_at' => 'Created', 'updated_at' => 'Updated' , 'published_at' => 'Publish'];
             $dateColumns = ['created_at', 'updated_at','published_at']; // replace with your actual date columns
-            $urlslug = '';
+            // $urlslug = '';
             $imagePaths = [];
             
             break;
         case "Euro Wings En":
             $ignoredColumns = ['s_alias', 'deleted_at','publish','like','done','tags','cource_cc','certain','price','objective','who_should_attend','code', 'out_lines','out_lines2','name_file','Arabic','Certified','conference','top','clean','aside','hidden','accreditation','broshoure','overview'];
-            $tooltips = [ 'course_c','name', 'title', 'subtitle' , 'sub_title'];
+            $tooltips = [ 'course_c', 'title', 'subtitle' , 'sub_title'];
             $popups = [ 'description', 'keyword', 'text','about','overview','broshoure','ar_overview','ar_broshoure','ar_about','ar_text','ar_description'];
             $jsonarrays = ['keyword','ar_keyword'];
-            $urlPaths = ['name' => 's_alias'];
+            $urlPaths = [];
+            $editPath = 'name';
+            $urlPath = 'name';
+            // $no_link = false;
             $fieldTitles = ['c_id' => 'Course ID' ,'course_c' => 'Category', 'sub_title' => 'Sub Title', 'sh' => 'Short', 'created_at' => 'Created', 'updated_at' => 'Updated' , 'published_at' => 'Publish'];
             $dateColumns = ['created_at', 'updated_at','published_at']; // replace with your actual date columns
-            $urlslug = '';
+            // $urlslug = '';
             $imagePaths = [];
             
             break;
@@ -119,9 +148,12 @@ $ajaxview= true;
             $popups = [ 'description', 'keyword', 'text','about','overview','broshoure','ar_overview','ar_broshoure','ar_about','ar_text','ar_description'];
             $jsonarrays = ['keyword','ar_keyword'];
             $urlPaths = [];
+            $editPath = 'name';
+            $urlPath = 'name';
+            // $no_link = false;
             $fieldTitles = ['c_id' => 'Course ID' ,'course_c' => 'Category', 'sub_title' => 'Sub Title', 'sh' => 'Short', 'created_at' => 'Created', 'updated_at' => 'Updated' , 'published_at' => 'Publish'];
             $dateColumns = ['created_at', 'updated_at','published_at']; // replace with your actual date columns
-            $urlslug = '';
+            // $urlslug = '';
             $imagePaths = [];
             
             break;

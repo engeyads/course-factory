@@ -3,7 +3,7 @@ session_start();
 include 'functions.php';
 include 'db.php';
 
- if (!isset($_SESSION['db']) || empty($_SESSION['db'])) {
+if (!isset($_SESSION['db']) || empty($_SESSION['db'])) {
     die("Error: Database session not set or empty.");
 }
 error_reporting(E_ALL);

@@ -8,7 +8,9 @@ html.light-theme a:hover {
 html.light-theme a.btn {
     color:white;
 }
-
+html.light-theme .card-special {
+    background-color: #dadada !important;
+}
 html.light-theme table.table-striped tbody tr:nth-of-type(odd) {
     background-color: #1111;
 }

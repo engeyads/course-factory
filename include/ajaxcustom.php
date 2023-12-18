@@ -14,15 +14,16 @@ $lvl = $_SESSION['userlevel'];
 $db_name = $_SESSION['db']; // Assuming you have $db_name set somewhere
 
 switch ($db_name) {
-    case 'agile4training':
-    case 'agile4training ar':
-        $DBweekname = 'week';
-        $newdbstype = true;
-        break;
+    
     case 'blackbird-training':
     case 'blackbird-training.co.uk':
         $DBweekname = 'weeks';
         $newdbstype = false;
+        break;
+    case 'agile4training':
+    case 'agile4training ar':
+        $DBweekname = 'week';
+        $newdbstype = true;
         break;
     case 'mercury english':
         $DBweekname = 'week';

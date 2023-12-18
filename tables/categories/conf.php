@@ -25,7 +25,7 @@
             $imagePaths = ['image' => $categoriesimgurl];
             break;
         case "mercury arabic":
-            $urlslug = '';
+            $urlslug = $websiteurl .$categoriesslug;
             $minTitleChar=40;
             $maxTitleChar = 60;
             $minShortCode = 1;
@@ -33,7 +33,7 @@
             $imagePaths = ['image' => $categoriesimgurl];
         break;
         case "mercury english":
-            $urlslug = '';
+            $urlslug = $websiteurl .$categoriesslug;
             $minTitleChar=40;
             $maxTitleChar = 60;
             $minShortCode = 1;
@@ -41,7 +41,7 @@
             $imagePaths = ['image' => $categoriesimgurl];
             break;
         case "mercury-training":
-            $urlslug = '';
+            $urlslug = $websiteurl .$categoriesslug;
             $minTitleChar=40;
             $maxTitleChar = 60;
             $minShortCode = 1;
@@ -49,7 +49,7 @@
             $imagePaths = ['glyphicon' => $categoriesimgurl];
             break;
         case "Euro Wings En":
-            $urlslug = '';
+            $urlslug = $websiteurl .$categoriesslug;
             $minTitleChar=40;
             $maxTitleChar = 60;
             $minShortCode = 1;
@@ -57,7 +57,7 @@
             $imagePaths = ['image' => $categoriesimgurl];
             break;
         case "Euro Wings Ar":
-            $urlslug = '';
+            $urlslug = $websiteurl .$categoriesslug;
             $minTitleChar=40;
             $maxTitleChar = 60;
             $minShortCode = 1;
@@ -65,7 +65,7 @@
             $imagePaths = ['image' => $categoriesimgurl];
             break;
         case "blackbird-training.co.uk":
-            $urlslug = '';
+            $urlslug = $websiteurl .$categoriesslug;
             $minTitleChar=40;
             $maxTitleChar = 60;
             $minShortCode = 1;
@@ -73,7 +73,7 @@
             $imagePaths = ['glyphicon' => $categoriesimgurl];
             break;
         case "blackbird-training":
-            $urlslug = '';
+            $urlslug = $websiteurl .$categoriesslug;
             $minTitleChar=40;
             $maxTitleChar = 60;
             $minShortCode = 1;

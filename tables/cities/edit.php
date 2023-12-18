@@ -78,7 +78,7 @@ if($newdbstype){
     FormsInput('w4_p_c','Price for 4 week \'Class C\'', 'text', false, 'col-2',false,0,5,'' );
     ?><hr></div><?php
     ?><br><br><?php
-    FormsDateTime('published_at','Publish Date And Time', false, 'col-6');
+    FormsDateTimeNew('published_at','Publish Date And Time', false, 'col-6');
     FormsEnd(); 
     
 }else{

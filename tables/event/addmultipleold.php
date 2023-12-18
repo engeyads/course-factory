@@ -16,7 +16,7 @@ if($cid == null){
 
         $cid = $row['c_id'];
     }else{
-        echo "no course with this id<br><button class='btn btn-primary float-right justify-content-end' onclick='window.location.href = \"/course-factory/event/addmultiple/\"'>Go To Add Multiple Events</button>";
+        echo "no course with this id<br><button class='btn btn-primary float-right justify-content-end' onclick='window.location.href = \"/event/addmultiple/\"'>Go To Add Multiple Events</button>";
         exit;
     }
 }

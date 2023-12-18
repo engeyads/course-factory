@@ -29,7 +29,12 @@ if(isset($_POST['editslug'])) { $editslug = $_POST['editslug']; }else { $editslu
 if(isset($_POST['trashslug'])) { $trashslug = $_POST['trashslug']; }else { $trashslug = ''; }
 if(isset($_POST['tooltips'])) { $tooltips = array_filter(explode(',', $_POST['tooltips'])); }else { $tooltips = []; }
 if(isset($_POST['urlPaths'])) { $urlPaths = $_POST['urlPaths']; }else { $urlPaths = []; }
+if(isset($_POST['nolink'])) { $nolink = true; }else { $nolink = false; }
+if(isset($_POST['urlPath'])) { if($_POST['urlPath'] == null || $_POST['urlPath'] == ''){$urlPath = '';$nolink = true;}else{ $urlPath = $_POST['urlPath']; } }else { $urlPath = '';$nolink = true; }
+if(isset($_POST['editPath'])) { if($_POST['editPath'] == null || $_POST['editPath'] == ''){$editPath = false;}else{ $editPath = $_POST['editPath']; } }else{ $editPath = false; }
 if(isset($_POST['urlslug'])) { $urlslug = $_POST['urlslug']; }else { $urlslug = ''; }
+if(isset($_POST['pageend'])) { $pageend = $_POST['pageend']; }else { $pageend = ''; }
+if(isset($_POST['dashedname'])) { $dashedname = $_POST['dashedname']; }else { $dashedname = false; }
 if(isset($_POST['dateColumns'])) { $dateColumns =  $_POST['dateColumns']; }else { $dateColumns = ''; }
 if(isset($_POST['gsc'])) { $gsc = $_POST['gsc']; }else { $gsc = ''; }
 if(isset($_POST['noedits'])) { $noedits =  true; }else { $noedits = false; }
@@ -38,20 +43,21 @@ if(isset($_POST['withEventCid'])) { $withEventCid =  $_POST['withEventCid']; }el
 if(isset($_POST['specialWheres'])){ $spwheres = $_POST['specialWheres']; }else { $spwheres = ''; }
 if(isset($_POST['excludesearch'])){ $excludesearch = explode(",", $_POST['excludesearch']); }else { $excludesearch = []; }
 if(isset($_POST['searchColumns'])){ $searchColumns = $_POST['searchColumns']; }else { $searchColumns = []; }
+if(isset($_POST['searchsColumns'])){ $searchsColumns = $_POST['searchsColumns']; }else { $searchsColumns = []; }
 if(isset($_POST['ajaxDataArrays'])) {
     $dataArr =  $_POST['ajaxDataArrays'];
     foreach($dataArr as $dataArray){
         $dataArrays[$dataArray['column']] = GetForSelect($dataArray['table'] , $conn2, $dataArray['param1'], $dataArray['param2']);
         }
 }else {
-    $dataArrays = ''; 
+    $dataArrays = []; 
 }
-
+// print_r($excludesearch);
 ## Search 
 $searchQuery = " ";
 if ($searchValue != '') {
     foreach ($columnNames as $columnName) {
-        if(array_key_exists($columnName, $urlPaths) || array_key_exists($columnName, $ignoredColumns) || $columnName == 'edit' || $columnName == 'trash' || $columnName == 'delete' ||  array_key_exists($columnName, $dateColumns)) {
+        if(in_array($columnName, $excludesearch) || array_key_exists($columnName, $urlPaths) || array_key_exists($columnName, $ignoredColumns) || $columnName == 'edit' || $columnName == 'trash' || $columnName == 'delete' ||  array_key_exists($columnName, $dateColumns)) {
         }else{
             if($columnName == 'start_date'){
                 $searchDay = date('d', strtotime($searchValue));
@@ -63,14 +69,26 @@ if ($searchValue != '') {
                 $searchMonth = date('m', strtotime($searchValue));
                 $searchYear = date('Y', strtotime($searchValue));
                 $searchQuery .= " OR (d2 = $searchDay AND m2 = $searchMonth AND y2 = $searchYear)";
-            }elseif(array_key_exists($columnName, $searchColumns) ){
+            }elseif(array_key_exists($columnName, $searchsColumns) ){
                 if( array_key_exists($columnName, $dataArrays) ){
-                    $searchQuery .= " OR LOWER(`$dataArrays[$columnName]`) LIKE LOWER('%$searchValue%')";
+                    foreach ($dataArrays[$columnName] as $Id => $Name) {
+                        if (stripos($Name, $searchValue) !== false) {
+                            // The city name contains the specified search text
+                            $searchQuery .= " OR `$columnName` = $Id";
+                        }
+                    }
                 }else{
-                    $searchQuery .= " OR LOWER(`$searchColumns[$columnName]`) LIKE LOWER('%$searchValue%')";
+                    $searchQuery .= " OR LOWER(`$searchsColumns[$columnName]`) LIKE LOWER('%$searchValue%')";
+                    // print_r($searchsColumns[$columnName]);
                 }
             }elseif( array_key_exists($columnName, $dataArrays) ){
-                $searchQuery .= " OR LOWER(`$dataArrays[$columnName]`) LIKE LOWER('%$searchValue%')";
+                
+                foreach ($dataArrays[$columnName] as $Id => $Name) {
+                    if (stripos($Name, $searchValue) !== false) {
+                        // The city name contains the specified search text
+                        $searchQuery .= " OR `$columnName` = $Id";
+                    }
+                }
 
             }else{
                 $searchQuery .= " OR LOWER(`$columnName`) LIKE LOWER('%$searchValue%')";
@@ -80,6 +98,21 @@ if ($searchValue != '') {
     // Remove the initial ' OR ' from $searchQuery
      $searchQuery = ' AND (' . substr($searchQuery, 4) . ')';
 }
+// if searchcolumns are not empty
+// if(!empty($searchColumns)){
+//     $conditions = array();
+//     foreach ($searchColumns as $key => $value) {
+//         // Assuming keys in $_GET correspond to column names in your table
+//         // You might want to validate/sanitize $key and $value before using them in the query
+//         if (!empty($value)) {
+//             $conditions[] = "`$key` = '$value'";
+//         }
+//     }
+//      $whereClause = implode(' AND ', $conditions);
+// }else{
+//     $whereClause = '1';
+
+// }
 
 if(isset($_POST['costumeQuery'])) { $costumeQuery =  $_POST['costumeQuery']; }else { $costumeQuery = ''; }
 $sortColumn = $columnNames[$columnIndex]; // Get the column name for sorting
@@ -101,7 +134,7 @@ $records = mysqli_fetch_assoc($sel);
 $totalRecords = $records['allcount'];
 ## Total number of records with filtering
 
-$sel = mysqli_query($conn2, "SELECT COUNT(*) AS allcount FROM $custom_from WHERE $where");
+$sel = mysqli_query($conn2, "SELECT COUNT(*) AS allcount FROM $custom_from WHERE $where ");
 $records = mysqli_fetch_assoc($sel);
 if ($records !== null) {
     $totalRecordwithFilter = $records['allcount'];
@@ -119,6 +152,9 @@ while ($row = mysqli_fetch_assoc($empRecords)) {
     // Use a temporary array to hold the data for each row
     $rowData = array();
     $i=0;
+    if(!$nolink){
+        $rowData['Link'] = '';
+    }
     if(!$noedits){
         $rowData['Edit'] = '';
         $rowData['Trash'] = '';
@@ -130,8 +166,17 @@ while ($row = mysqli_fetch_assoc($empRecords)) {
         $deleteclass = 'text-decoration-line-through text-danger';
     }
     foreach ($columnNames as $columnName) {
-        
+        $pre ='';
+        $suf ='';
         if(!empty($row[$columnName])){
+            if(!$editPath){
+                $cellContent = $row[$columnName];
+            }else{
+                if($columnName == $editPath){
+                    $pre = '<a target="_blank" href="'.$url . $folderName . '/'. $editslug . ($withEventCid ? '/'.$row['c_id'] : '') .'/' . $row['id'] .'">';
+                    $suf = '</a>';
+                }
+            }
             $cellContent = $row[$columnName];
             if (!empty($cellContent) && in_array($columnName, $dateColumns)) {
                 $cellContent = time_ago($cellContent);
@@ -139,14 +184,14 @@ while ($row = mysqli_fetch_assoc($empRecords)) {
             if ( !empty($cellContent) && $dataArrays && array_key_exists($columnName, $dataArrays)) {
                 $dataArray = $dataArrays[$columnName];
                 $dataValue = $row[$columnName];
-                $rowData[$columnName] = $cellContent = $dataArray[$dataValue] ?? '';
+                $rowData[$columnName] = $cellContent = $pre.($dataArray[$dataValue] ?? '').$suf;
             }elseif($cellContent && $tooltips && in_array($columnName, $tooltips)){
                 $tooltipContent = $cellContent;
 
                 $cellContent = $cellContent !== null && mb_strlen($cellContent, 'UTF-8') >  $maxlenginfield ? mb_substr($cellContent, 0, $maxlenginfield, 'UTF-8') . '...' : $cellContent;
                 
                 $rowData[$columnName] = '<td class="' . $deleteclass . '" data-toggle="tooltip" data-placement="top"
-                    title="' . htmlspecialchars($tooltipContent) . '">' . $cellContent . '</td>';
+                    title="' . htmlspecialchars($tooltipContent) . '">' . $pre.$cellContent.$suf . '</td>';
             
                 }elseif ($row[$columnName] && strpos($row[$columnName], 'webp') !== false) {
                 if (array_key_exists($columnName, $imagePaths)) {
@@ -179,7 +224,17 @@ while ($row = mysqli_fetch_assoc($empRecords)) {
         } elseif( $urlPaths && array_key_exists($columnName, $urlPaths)){
             $urlColumn = $urlPaths[$columnName];
             $urlValue = $row[$urlColumn];
-            $rowData[$columnName] = '<a target="_blank" href="' . $urlslug . $urlValue.'">' . $cellContent . '</a>';
+            if ($dashedname) {
+                // Remove special characters and replace spaces with dashes
+                $cleanedName = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $urlValue));
+                $cleanedName = preg_replace('/-+/', '-', $cleanedName);
+                if (preg_match('/[^A-Za-z0-9]$/', $urlValue)) {
+                    $cleanedName .= '-';
+                }
+                $rowData[$columnName] = '<a target="_blank" href="' . $urlslug . $cleanedName. $pageend.'">' . $cellContent . '</a>';
+            } else {
+                $rowData[$columnName] = '<a target="_blank" href="' . $urlslug . $urlValue. $pageend.'">' . $cellContent . '</a>';
+            }
         } elseif ($cellContent && $jsonarrays && in_array($columnName, $jsonarrays)) {
             // Handle the case when the cell content is a non-empty JSON array
             $popupContent = json_decode($cellContent, true);
@@ -213,13 +268,27 @@ while ($row = mysqli_fetch_assoc($empRecords)) {
             }elseif ($columnName === $gsc['indexed']){
                 $indexingStatus = checkIndexingStatus($urlslug . $urlValue);
                 $rowData[$columnName] =  '<td class="' . $deleteclass . '">' . $indexingStatus . '</td>';
-            } else {
+            }else {
                 // If the cell content does not contain "webp", use the regular value
-                $rowData[$columnName] = '<span class="'.$deleteclass.'">'.$row[$columnName].'</span>';
+                $rowData[$columnName] = "<span class='$deleteclass'>$pre".$row[$columnName]."</span>";
             }
         }else{
             $rowData[$columnName] = '';
         }
+    }
+    if(!$nolink){
+          $urlVal = $row[$urlPath];
+            if ($dashedname) {
+                // Remove special characters and replace spaces with dashes
+                $cleanedName = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $urlVal));
+                $cleanedName = preg_replace('/-+/', '-', $cleanedName);
+                if (preg_match('/[^A-Za-z0-9]$/', $urlVal)) {
+                    $cleanedName .= '-';
+                }
+                $rowData['Link'] = '<a target="_blank" href="' . $urlslug . $cleanedName. $pageend.'"><i class="lni lni-world"></i></a>';
+            } else {
+               $rowData['Link'] = '<a target="_blank" href="' . $urlslug . $urlVal. $pageend.'"><i class="lni lni-world"></i></a>';
+            }
     }
     if(!$noedits){
         $rowData['Edit'] = '<a target="_blank" href="'.$url . $folderName . '/'. $editslug . ($withEventCid ? '/'.$row['c_id'] : '') .'/' . $row['id'] .'">

@@ -7,6 +7,13 @@ html.dark-theme a:hover {
 html.dark-theme a.btn {
     color:white;
 }
+html.dark-theme .card-special {
+    background-color: #202a40  !important;
+}
+
+html.dark-theme .accordion, html.dark-theme .accordion-body{
+    color: #fff !important;
+}
 
 html.dark-theme body{
     color: #d7d7d7;

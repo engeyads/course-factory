@@ -236,14 +236,14 @@ if(isset($_SESSION['success'])){
         var input = $(this).parent().find("input").val();
         if(action == 'google_cron'){
           $.ajax({
-            url: "/course-factory/cronjob.php?action=google_cron&co=<?php echo $_SESSION['co']; ?>&url=<?php echo str_replace(array('http://', 'https://','http://www.','https://www.','www.','/'), '', $websiteurl); ?>",
+            url: "/google<?php echo $_SESSION['db'] ?>.php",
             type: "GET",
             success: function(response) {},
             error: function() {}
           });
         }else if(action == 'speed_cron'){
           $.ajax({
-            url: "/course-factory/cronjob.php?action=speed_cron&co=<?php echo $_SESSION['co']; ?>",
+            url: "/speed<?php echo $_SESSION['db'] ?>.php",
             type: "GET",
             success: function(response) {},
             error: function() {}

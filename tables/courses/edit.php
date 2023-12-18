@@ -15,6 +15,41 @@ if ($_SESSION['userlevel'] > 2 ) {
     }
     $Columns = GetTableColumns($tablename,$theconnection);
 
+    if(tableExists($theconnection, 'sitekeywords')){
+
+        $query1 = "SELECT *
+            FROM sitekeywords ";
+
+// Check if the table sitekeywords_coursemain exists in the database
+$tableName = "sitekeywords_coursemain";
+if (tableExists($theconnection, $tableName)) {
+    $query1 .= "LEFT JOIN $tableName ON sitekeywords.id = $tableName.sitekeywords_id ";
+    $query1 .= "WHERE $tableName.course_main_id=$id";
+}else{
+    $query0 = "CREATE TABLE IF NOT EXISTS sitekeywords_coursemain (
+             id SERIAL PRIMARY KEY,
+             course_main_id INT ,
+             sitekeywords_id INT ,
+             FOREIGN KEY (course_main_id) REFERENCES course_main(id) ON DELETE CASCADE ,
+             FOREIGN KEY (sitekeywords_id) REFERENCES sitekeywords(id) ON DELETE CASCADE,
+             CONSTRAINT unique_coursekeywords UNIQUE (course_main_id, sitekeywords_id)
+         )";
+    mysqli_query($theconnection, $query0);
+    $query1 .= "LEFT JOIN $tableName ON sitekeywords.id = $tableName.sitekeywords_id ";
+    $query1 .= "WHERE $tableName.course_main_id=$id";
+}
+
+$result1 = mysqli_query($theconnection, $query1);
+
+if ($result1 && mysqli_num_rows($result1) > 0) {
+    while ($row1 = mysqli_fetch_assoc($result1)) {
+        $keys[] = $row1['name'];
+    }
+    $lines = array_map(function ($key) {
+        return $key;
+    }, $keys);
+}
+}
     FormsStart();
 
     $categories = GetForSelect('course_c' , $conn2, 'id', 'name');
@@ -32,13 +67,23 @@ if ($_SESSION['userlevel'] > 2 ) {
 
     FormsInput('ar_name','Arabic Name', 'text', false, 'col-6',true,50,90,'published_at',true,$prompt,"return in arabic");
     if ($id){
-        $prompt="suggest meta title for this course (".(isset($row['name']) ? $row['name'] : '').") between 50 to 60 letter and Write for humans and return one title return the title only";
+        $prompt="suggest meta title for this course
+        {
+            ".(isset($row['name']) ? $row['name'] : '')."
+        }
+        Use what fit from this keywords with course name
+        {
+        [keyword]
+        ".(isset($lines) ? implode(", \n", $lines) : "")."
+        [/keyword]
+        }
+        ";
     }
-    FormsInput('title','Title', 'text', false, 'col-6',true,40,80,'published_at',true,$prompt,$system);
+    FormsInput('title','Title', 'text', false, 'col-6',true,40,80,'published_at',true,$prompt,"Write between 45 to 60 letter and return one title only ");
     if ($id){
         $prompt="suggest meta title for this course (".(isset($row['name']) ? $row['name'] : '').") between 50 to 60 letter and Write for humans and return one title return the title only";
     }
-    FormsInput('ar_title','Arabic Title', 'text', false, 'col-6',true,40,80,'published_at',true,$prompt,"return in arabic");
+    FormsInput('ar_title','Arabic Title', 'text', false, 'col-6',true,40,80,'published_at',true,$prompt,"Write between 45 to 60 letter and return one title only return in arabic");
     
     if(isset($courseimgurl) && $newdbstype){
         FormsImg('image','Image', 'col-4 row float-start',$courseimgurl,'s_alias',$tablename,$remoteDirectory,'courses','1.5',400,10);
@@ -83,46 +128,68 @@ if ($_SESSION['userlevel'] > 2 ) {
 
 /////////////////////////////////////// start sitekeywords
     if ($_SESSION['userlevel'] > 2  && $id) {
-        if(tableExists($theconnection, 'sitekeywords')){
-
-            $query1 = "SELECT *
-                FROM sitekeywords ";
-    
-    // Check if the table sitekeywords_coursemain exists in the database
-    $tableName = "sitekeywords_coursemain";
-    if (tableExists($theconnection, $tableName)) {
-        $query1 .= "LEFT JOIN $tableName ON sitekeywords.id = $tableName.sitekeywords_id ";
-        $query1 .= "WHERE $tableName.course_main_id=$id";
-    }else{
-        $query0 = "CREATE TABLE IF NOT EXISTS sitekeywords_coursemain (
-                 id SERIAL PRIMARY KEY,
-                 course_main_id INT ,
-                 sitekeywords_id INT ,
-                 FOREIGN KEY (course_main_id) REFERENCES course_main(id) ON DELETE CASCADE ,
-                 FOREIGN KEY (sitekeywords_id) REFERENCES sitekeywords(id) ON DELETE CASCADE,
-                 CONSTRAINT unique_coursekeywords UNIQUE (course_main_id, sitekeywords_id)
-             )";
-        mysqli_query($theconnection, $query0);
-        $query1 .= "LEFT JOIN $tableName ON sitekeywords.id = $tableName.sitekeywords_id ";
-        $query1 .= "WHERE $tableName.course_main_id=$id";
-    }
-    
-    $result1 = mysqli_query($theconnection, $query1);
-    
-    if ($result1 && mysqli_num_rows($result1) > 0) {
-        while ($row1 = mysqli_fetch_assoc($result1)) {
-            $keys[] = $row1['name'];
-        }
-        $lines = array_map(function ($key) {
-            return $key;
-        }, $keys);
-    }
+       if(tableExists($theconnection, 'sitekeywords')){ 
     ?>
     <br>
     <div class="col-6 mb-3">
         <label class="form-label">Site Keywords</label>
         <textarea class="form-control mb-3" rows="20" placeholder="sitekeywords" aria-label="sitekeywords"
             name="sitekeywords" id="sitekeywords" ><?php echo isset($lines) ? implode("\n", $lines) : ''; ?></textarea>
+            
+            <?PHP // ai script
+            global $type;
+        echo '    
+        <script>
+      
+      $(document).ready(function() {
+          if(1) {
+              $("#openModalLinksitekeywords").click(function(e){
+                  e.preventDefault();
+                  var txtval = $("#sitekeywords").val();
+                  $.ajax({
+                      url: "'.$httpurl.'tables/aimodal.php",
+                      type: "POST",
+                      data: {
+                        httpurl: "'.$httpurl.'",
+                        prompt: `'.str_replace('<br />', '', nl2br($prompt)).'`,
+                        system: "'.$system.'",
+                        type: "'.$type.'",
+                        txtval: "",
+                      },
+                      success: function(result){
+                          if (result.includes("Error:")) {
+                              $("#modalBodyContentsitekeywords").html(result);
+                          } else {
+                              
+                          }
+                      },
+                      error: function(error) {
+                        console.log(error);
+                          $("#modalBodyContentsitekeywords").html("Error: Unable to load content.");
+                      }
+                  });
+              });
+              
+              $(document).on("click", "#changeInputsitekeywords", function(){
+                  var textareaContent = $("#ai").val();
+                  $("#sitekeywords").val(textareaContent).trigger("input");
+                        var confirmation = confirm("Are you sure you want to change? ");
+                        if (confirmation) {
+
+                        // Convert Markdown to HTML using marked.js
+                        var htmlContent = marked.parse(textareaContent);
+
+                            updateTinyMCE(htmlContent, "sitekeywords");
+                            $("#theform").submit();
+                        }
+                      
+                  
+              });
+               
+          }
+      });
+      </script>';
+      ?>
     </div>
                 <?php
         }
@@ -131,39 +198,59 @@ if ($_SESSION['userlevel'] > 2 ) {
     // FormsText('ar_keywords','Arabic Keywords', 'ar_keywords','', false, 'col-6', 20, false,0,0) ;
     // FormsText('keyword','Keywords', 'keyword','', false, 'col-6', 20, false,0,0) ;
     // FormsText('keywords','English Keywords', 'keyword','', false, 'col-6', 20, false,0,0) ;
-    //FormsText('sitekeywords','Website Keywords', 'sitekeywords','', false, 'col-6', 20, false,0,0) ;
-    $prompt = "suggest meta description for this course (".(isset($row['name']) ? $row['name'] : '').")  between 110 to 165 letter and Write for humans and return one description";
-    FormsText('description','description', 'text','published_at', false, 'col-6', 10, true,110,170,true, $prompt,'');
-    $prompt = "suggest meta description for this course (".(isset($row['ar_name']) ? $row['ar_name'] : '').")  between 110 to 165 letter and Write for humans and return one description";
-    FormsText('ar_description','Arabic description', 'text','published_at', false, 'col-6', 10, true,110,160,true, $prompt,"return in arabic");
+    // FormsText('sitekeywords','Website Keywords', 'sitekeywords','', false, 'col-6', 20, false,0,0) ;
+    
+    $promtdescription = "suggest meta description for this course (".(isset($row['name']) ? $row['name'] : '').")  between 110 to 165 letter and Write for humans and return one description";
+    $promtdescriptionar = "suggest meta description for this course (".(isset($row['ar_name']) ? $row['ar_name'] : '').")  between 110 to 165 letter and Write for humans and return one description";
+    $systemdescription = "Write between 110 to 165 character and return one description Don't duplicate same words";
+    $systemdescriptionar = "Write between 110 to 165 character and return one description Don't duplicate same words return in arabic";
+    
+    if($db_name == 'mercury english' || $db_name == 'mercury arabic' && $id){
+        $promtdescriptionar = $promtdescription = "Suggest meta description for this course
+        {".(isset($row['name']) ? $row['name'] : '')."}
+        Get what fit from course outline
+        [outline]
+        ".(isset($row['overview']) ? $row['overview'] : '')."
+        [/outline]
+        Get what fit from these keywords
+        [keyword]
+        ".(isset($lines) ? implode(", \n", $lines) : "")."
+        [/keyword]";
+        $systemdescription = "Write between 135 to 165 character and return one description Don't duplicate same words";
+    }
+    if( $db_name == 'mercury arabic' && $id){
+
+        $systemdescription = "Write between 135 to 165 character and return one description Don't duplicate same words return in arabic";
+    }
+    FormsText('description','description', 'text','published_at', false, 'col-6', 10, true,110,170,true, $promtdescription,$systemdescription);
+    FormsText('ar_description','Arabic description', 'text','published_at', false, 'col-6', 10, true,110,160,true, $promtdescriptionar,$systemdescriptionar);
+    
+    
+    
     $promtoverview ='';
     if($db_name == 'mercury english' || $db_name == 'mercury arabic' && $id){
-        $promtoverview = "For the following course : 
-            {".(isset($row['name']) ? $row['name'] : '')."}
-            add this keyword if its fit 
-            and enhance the hole outlines
-
-            [keyword]
-            ".(isset($lines) ? implode("\n", $lines) : "")."    
-            [/keyword]
-
-            [outline]
-            ".(isset($row['overview']) ? $row['overview'] : '')."
-            [/outline]";
-
+        $promtoverview = "
+        For the following course :
+        {".(isset($row['name']) ? $row['name'] : '')."}
+        Add these keywords if it fits
+        And enhance the outlines of the entire course with these keywords if it fits
+        Create a new subheading using the keywords with a short paragraph if it fits
+        [keyword]
+        ".(isset($lines) ? implode(", \n", $lines) : "")." 
+        [/keyword]
+        [Outline]
+        ".(isset($row['overview']) ? $row['overview'] : '')."
+        [/Outline]";
     }
-    FormsEditor('overview','Text', 'text', 'true', 'col-12',true, $promtoverview,'Rewrite in markdown format and return only the text Do not change the course except by adding long sentences and keywords, and do not shorten any sentences from the course');
+    FormsEditor('overview','Text', 'text', 'true', 'col-12',true, $promtoverview,'Rewrite in markdown format and return only the text Change the course by adding long sentences and keywords, and do not shorten any sentences from the course');
     FormsEditor('ar_overview','Arabic Text', 'text', 'true', 'col-12',true, $promtoverview,'Rewrite in markdown format and return only the text Return in Arabic Do not change the course except by adding long sentences and keywords, and do not shorten any sentences from the course');
-    // FormsEditor('overview','Text', 'text', 'true', 'col-12  ') ;
-    // FormsEditor('ar_overview','Arabic Text', 'text', 'true', 'col-12  ') ;
     
     FormsEditor('broshoure','Broshoure', 'text', 'true', 'col-12  ') ;    
     FormsEditor('ar_broshoure','Arabic Broshoure', 'text', 'true', 'col-12  ') ;    
     
-    FormsDateTime('published_at','Publish Date And Time', false, 'col-6') ;
+    FormsDateTimeNew('published_at','Publish Date And Time', false, 'col-6') ;
     
     FormsEnd(); 
-                
 ///////////////////////////////////////  view  events
 if ($_SESSION['userlevel'] > 2  && $c_id) {
     $folderName = 'event';
@@ -184,6 +271,10 @@ if ($_SESSION['userlevel'] > 2  && $c_id) {
     $jsonarrays = [];
     $imagePaths = [];
     $urlPaths = [];
+    $editPath = 'city';
+    $urlPath = 'id';
+    // $no_link = true;
+    // $no_edits = true;
     $fieldTitles = ['certain' => 'Upcoming', 'start_date' => 'Start Date', 'end_date' => 'End Date', 'created_at' => 'Created', 'updated_at' => 'Updated' , 'published_at' => 'Publish'];
     $dateColumns = ['created_at', 'updated_at','published_at']; // replace with your actual date columns
     $cities = GetForSelect('cities' , $conn2, 'id', 'name');
@@ -217,7 +308,7 @@ if ($_SESSION['userlevel'] > 2  && $c_id) {
     $ignoredColumnsDB = ['hotel_photo','hotel_link','address','visible' ];  // Replace these with your actual column names to ignore
     $additionalColumns = ['start_date', 'end_date'];  // Replace these with your actual additional column names
 
-?><a class="btn btn-primary float-right justify-content-end" href="<?php echo $url; ?>event/addmultiple/<?php echo $c_id; ?>" target="_blank" rel="noopener noreferrer">Add Multi Events</a><?php
+?><a class="btn btn-primary float-right justify-content-end" href="<?php echo $url; ?>event/addmultiplebycourse/<?php echo $c_id; ?>" target="_blank" rel="noopener noreferrer">Add Multi Events</a><?php
     include 'include/view.php';
     //include 'include/logview.php';
 }else{
