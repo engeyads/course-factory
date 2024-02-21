@@ -1,24 +1,12 @@
 <?php
-if ($_SERVER['HTTP_HOST']=='localhost' || $_SERVER['HTTP_HOST']=='mercuryt.mercury-training.local' || $_SERVER['HTTP_HOST']=='admin.blackbird-training.local' || $_SERVER['HTTP_HOST']=='192.168.5.141'){
-    $db_host = 'localhost';
-    $db_user = 'root';
-    $db_password = '';
-    $db_name = 'admin';
-    $conn1dbname = 'admin';
-    if($_SERVER['HTTP_HOST']=='localhost'){
-        $url = 'localhost/course-factory/';
-    }elseif($_SERVER['HTTP_HOST']=='admin.blackbird-training.local'){
-        $url = 'https://admin.blackbird-training.local';
-    }elseif($_SERVER['HTTP_HOST']=='mercuryt.mercury-training.local'){
-        $url = 'https://mercuryt.mercury-training.local';
-    }
-}elseif($_SERVER['HTTP_HOST']=='mercuryt.mercury-training.com') {
+if($_SERVER['HTTP_HOST']=='mercuryt.mercury-training.com') {
     $db_host = 'localhost';
     $db_user = 'mercuryt_coursef';
     $db_password = '@I9o4!!!oZ0Z$LXP';
     $db_name = 'mercuryt_cf';
     $conn1dbname = 'mercuryt_cf';
     $url = 'https://mercuryt.mercury-training.com/';
+
 }elseif($_SERVER['HTTP_HOST']=='admint.blackbird-training.com'){
     $db_host = 'localhost';
     // $db_host = 'mercuryt.mercury-training.com';
@@ -31,6 +19,24 @@ if ($_SERVER['HTTP_HOST']=='localhost' || $_SERVER['HTTP_HOST']=='mercuryt.mercu
     $conn1dbname = 'admint_cf';
     
     $url = 'https://admint.blackbird-training.com/';
+
+}else{
+    echo '<script> console.log("'.$_SERVER['REQUEST_URI'].'")</script>';
+    $substring = "mercuryt.mercury-training.com";
+    // Check if the URL contains the specified substring
+    if (strpos($_SERVER['REQUEST_URI'], $substring) !== false) {
+        $url = 'http://'.$_SERVER['HTTP_HOST'].'/mercuryt.mercury-training.com/';
+        echo '<script> console.log("'. $url.'")</script>';
+    }else{
+        $url = 'https://'.$_SERVER['HTTP_HOST'].'/';
+        echo '<script> console.log("'. $url.'")</script>';
+    }
+    $db_host = 'localhost';
+    $db_user = 'root';
+    $db_password = '';
+    $db_name = 'admin';
+    $conn1dbname = 'admin';
+    $isLocal = true;
 }
 
 // Create connection

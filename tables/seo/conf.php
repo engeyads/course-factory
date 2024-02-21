@@ -20,5 +20,5 @@
 
      $restype = '';
     $change = false;
-    $ajaxview= false;
+    $ajaxview= true;
 ?>

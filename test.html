@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Client</title>
+</head>
+<body>
+    <div id="state"></div>
+    <div id="message"></div>
+    <script>
+        const socket = new WebSocket('wss://mercuryt.mercury-training.com:3222');
+
+        socket.addEventListener('open', (event) => {
+            console.log('Connected to WebSocket server');
+            document.getElementById('state').innerHTML = 'Connected to WebSocket server';
+            socket.send('Hello, WebSocket server!');
+        });
+
+        socket.addEventListener('message', (event) => {
+            console.log(`Message from server: ${event.data}`);
+            //show message
+            document.getElementById('message').innerHTML = event.data;
+        });
+
+        socket.addEventListener('close', (event) => {
+            console.log('Disconnected from WebSocket server');
+            document.getElementById('state').innerHTML = 'Disconnected from WebSocket server';
+        });
+    </script>
+</body>
+</html>

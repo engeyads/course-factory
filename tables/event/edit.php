@@ -1,9 +1,22 @@
 <?php
 if ($_SESSION['userlevel'] > 2 ) {
+    ?><div class="alert border-0 bg-light-info alert-dismissible fade show py-2">
+        <div class="d-flex align-items-center">
+            <div class="fs-3 text-info"><i class="bi bi-info-circle-fill"></i>
+            </div>
+            <div class="ms-3">
+            <div class="text-info"><b>Hint:</b> you can Save this form by pressing Ctrl + S, or Trash it by pressing delete button on keyboard !</div>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php
     $path = dirname(__FILE__);
     include $path.'/conf.php';  
 $id = $_GET['id'] ?? null; 
 $c_id = isset($_GET['course']) ? $_GET['course'] : $_GET['c_id'];
+    $thepage = 'event';
+    ?><button class="btn btn-secondary m-2 ml-0" onclick="window.location.href='<?php echo $url.$thepage; ?>/view'"><i class="bi bi-arrow-left"></i> Back to View</button><br><?php
 
 $tablename = 'course';
 $httpurl = $url;
@@ -16,14 +29,7 @@ $theconnection = $conn2;
 $updateurl = 'update';
 $remoteDirectory = 'images';
 $courseId = $row_course_main = GetRow($c_id,'c_id','course_main' , $theconnection);
-if(isset($_GET['id'])){
-    $row = GetRow($id,'id',$tablename , $theconnection);
 
-    if(!$row){
-        http_response_code(404);
-        header("Location: $url"."event/edit/$c_id");
-    }
-}
 
 if($courseId){
     
@@ -59,14 +65,48 @@ if($courseId){
 
 $categoryrow = GetRow($row_course_main['course_c'],'id','course_c' , $theconnection);
 
-
 $Columns = GetTableColumns($tablename,$theconnection);
 
 
  
 // Function to get the next occurrences of a specific day of the week
 
+?><button class="btn btn-secondary m-2 ml-0" onclick="window.location.href='<?php echo $url; ?>courses/edit/<?php echo $row_course_main['id'] ?>'"><i class="bi bi-arrow-left"></i> Back to Course</button><br><?php
+if(isset($_GET['id'])){
+    $row = GetRow($id,'id',$tablename , $theconnection);
+    $trashed = $row['deleted_at'] != null;
+    
+        if($trashed){
+            $customClass = 'bg-light-warning';
+        }
+        if ($dashedname) {
+            // Remove special characters and replace spaces with dashes
+            $catcleanedName = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $categoryrow['name']));
+            $catcleanedName = preg_replace('/-+/', '-', $catcleanedName);
+            if (preg_match('/[^A-Za-z0-9]$/', $categoryrow['name'])) {
+                $catcleanedName .= '-';
+            }
+            $crscleanedName = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $row_course_main['name']));
+            $crscleanedName = preg_replace('/-+/', '-', $crscleanedName);
+            if (preg_match('/[^A-Za-z0-9]$/', $row_course_main['name'])) {
+                $crscleanedName .= '-';
+            }
+            
 
+            $link = $crscleanedName.'/'.$row['id'].'/'.$catcleanedName . $pageend;
+        } else {
+            $urlValue = $row[$urlPath];
+            $link = $urlslug . $urlValue. $pageend;
+        }
+    if ($_SESSION['userlevel'] > 9 ) {
+        ?><button tabindex="-1" class="btn btn-danger m-2 ml-0" title="Delete" onclick="deleteItem('<?php echo $id ?>')"><i class="bi bi-x-circle-fill m-0"></i> </button><?php
+    }   ?><button tabindex="-1" class="btn btn-warning btn-trash m-2 ml-0" title="<?php echo $trashed ? 'Untrash' : 'Trash'?>" onclick="trashItem('<?php echo $id ?>')"><?php echo $trashed ? '<i class="bi bi-arrow-counterclockwise m-0"></i>' : '<i class="bi bi-trash-fill m-0"></i>'?> </button>
+          <button tabindex="-1" class="btn btn-info m-2 ml-0" title="Show on web" onclick="window.open('<?php echo $link?>','_blank')"><i class="bx bx-world m-0"></i> </button><?php
+    if(!$row){
+        http_response_code(404);
+        header("Location: $url"."event/edit/$c_id");
+    }
+}
 
  
  
@@ -386,6 +426,72 @@ $(function() {
     <?php } ?>
 });
 
+    function deleteItem(id){
+        if (confirm('Are you sure you want to delete this item?')) {
+            $.ajax({
+                type: 'GET',
+                url: '<?php echo $url.$thepage . '/delete/' ?>' + id,
+                contentType: 'application/x-www-form-urlencoded',
+                success: function(response) {
+                    if (response.success == true ) {
+                        window.location.href = '<?php echo $url?>courses/edit/<?php echo $row_course_main['id']?>';
+                    } else {
+                        error_noti(response.message);
+                    }
+                },
+                error: function() {
+                    error_noti("Failed to delete the row.");
+                    success = false;
+                }
+            });
+        }
+    }
+
+    function trashItem(id){
+        if (confirm('Are you sure you want to trash this item?')) {
+            $.ajax({
+                type: 'GET',
+                url: '<?php echo $url.$thepage . '/trash/' ?>' + id,
+                contentType: 'application/x-www-form-urlencoded',
+                success: function(response) {
+                    if (response.success == true ) {
+                        success_noti(response.message);
+                        // if the response.message starts with un trashed
+                        if(response.message.startsWith('Un trashed')){
+                            $('.btn-trash').find('i').removeClass('bi-arrow-counterclockwise');
+                            $('.btn-trash').find('i').addClass('bi-trash-fill');
+                            $('.card:first').removeClass('bg-light-warning');
+                        }else{
+                            $('.btn-trash').find('i').addClass('bi-arrow-counterclockwise');
+                            $('.btn-trash').find('i').removeClass('bi-trash-fill');
+                            $('.card:first').addClass('bg-light-warning');
+                        }
+                    } else {
+                        error_noti(response.message);
+                    }
+                },
+                error: function() {
+                    error_noti("Failed to delete the row.");
+                    success = false;
+                }
+            });
+        }
+    }
+    document.addEventListener('keydown', function(event) {
+        // Check if Ctrl key is pressed and the S key is pressed
+        if (event.ctrlKey && event.key === 's') {
+            // Prevent the default behavior (save page)
+            event.preventDefault();
+
+            // Trigger form submission
+            document.getElementById('theform').submit();
+        }
+        if (event.key === 'Delete') {
+            // Prevent the default behavior (e.g., navigating back)
+            event.preventDefault();
+            trashItem('<?php echo $id ?>');
+        }
+    });
 </script>
 <?php
 }else{   
@@ -400,6 +506,7 @@ $(function() {
         </div>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
+    <a href="javascript:history.back()" class="btn btn-primary">Back to Previous Page</a>
     <?php
 }
 ?>

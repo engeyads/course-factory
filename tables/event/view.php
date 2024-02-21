@@ -242,21 +242,39 @@ if ($_SESSION['userlevel'] > 2 ) {
     }else{
         $d2 = " 1 ";
     }
-    $custom_select = "course.id,CONCAT('<a href=/cities/edit/', `cities`.`id`, '>', `cities`.`name`, '</a>') AS in_city,CONCAT('<a href=/courses/edit/', `course_main`.`id`, '>', `course_main`.`name`, '</a>') AS course_name ,CONCAT('<a href=/categories/edit/', `course_c`.`id`, '>', `course_c`.`name`, '</a>') AS category ,course.price,course.c_id,course.deleted_at,CASE WHEN course.currency is null or course.currency='' THEN '€' END AS currency ,CASE WHEN course.certain = 'on' THEN '✅' ELSE '❌' END AS certain ,CASE WHEN cities.monday = 1 THEN '✅' ELSE '❌' END AS monday ,date(CONCAT(y1, '-', LPAD(m1, 2, '0'), '-', LPAD(d1, 2, '0'))) AS start_date, date(CONCAT(y2, '-', LPAD(m2, 2, '0'), '-', LPAD(d2, 2, '0'))) AS end_date";
+    if(isset($_GET['class'])){
+        if($_GET['class'] != '0'){
+            $class = " LOWER(`course_c`.`class`)=LOWER('".$_GET['class']."') ";
+        }else{
+            $class = " 1 ";
+        }
+    }else{
+        $class = " 1 ";
+    }
+    if(isset($_GET['weeks'])){
+        if($_GET['weeks'] != '0'){
+            $weeks = " `course_main`.`$DBweekname`=".$_GET['weeks'];
+        }else{
+            $weeks = " 1 ";
+        }
+    }else{
+        $weeks = " 1 ";
+    }
+    $custom_select = "course.id,CONCAT('<a href=/cities/edit/', `cities`.`id`, '>', `cities`.`name`, '</a>') AS City,CONCAT('<a href=/courses/edit/', `course_main`.`id`, '>', `course_main`.`name`, '</a>') AS course_name ,CONCAT('<a href=/categories/edit/', `course_c`.`id`, '>', `course_c`.`name`, '</a>') AS category ,course.price as Price,course.c_id,course.deleted_at,course.currency as Currency,CASE WHEN course.certain = 'on' THEN '✅' ELSE '❌' END AS Upcomming ,CASE WHEN cities.monday = 1 THEN '✅' ELSE '❌' END AS monday ,date(CONCAT(y1, '-', LPAD(m1, 2, '0'), '-', LPAD(d1, 2, '0'))) AS start_date, date(CONCAT(y2, '-', LPAD(m2, 2, '0'), '-', LPAD(d2, 2, '0'))) AS end_date";
     $custom_from = " course LEFT JOIN course_main ON course.c_id = course_main.c_id LEFT JOIN course_c ON course_main.course_c = course_c.id  LEFT JOIN cities ON course.city = cities.id ";
     
     if(isset($_GET['monday']) || isset($_GET['city']) || isset($_GET['upcomming']) || isset($_GET['category']) || isset($_GET['y1']) || isset($_GET['y2']) || isset($_GET['m1']) || isset($_GET['m2']) || isset($_GET['d1']) || isset($_GET['d2'])){
-        $custom_where = " $upcomming AND $category AND $city AND $monday AND $y1 AND $y2 AND $m1 AND $m2 AND $d1 AND $d2 "; 
+        $custom_where = " $upcomming AND $category AND $city AND $monday AND $y1 AND $y2 AND $m1 AND $m2 AND $d1 AND $d2 AND $class AND $weeks"; 
     }
-    $searchsColumns = [ 'course_name'=>'course_main`.`name','id' => 'course`.`id','category' => 'course_c`.`name' , 'in_city' => 'cities`.`name' ,  'certain' => 'course`.`certain', 'price' => 'course`.`price', 'currency' => 'course`.`currency'];
+    $searchsColumns = [ 'course_name'=>'course_main`.`name','id' => 'course`.`id','category' => 'course_c`.`name' , 'City' => 'cities`.`name' ,  'Upcomming' => 'course`.`certain', 'Price' => 'course`.`price', 'Currency' => 'course`.`currency'];
     //   $costumeQuery = "SELECT * ,
     //         TIMESTAMP(CONCAT(y1, '-', LPAD(m1, 2, '0'), '-', LPAD(d1, 2, '0'))) AS start_date,
     //         TIMESTAMP(CONCAT(y2, '-', LPAD(m2, 2, '0'), '-', LPAD(d2, 2, '0'))) AS end_date
     //     FROM course";
     // $excludesearch = ['category'];
-    $ignoredColumns = ['city','c_id','d1', 'm1', 'y1', 'd2', 'm2', 'y2','deleted_at','updated_at','created_at','published_at'];
+    $ignoredColumns = ['price','currency','certain','smart','city','c_id','d1', 'm1', 'y1', 'd2', 'm2', 'y2','deleted_at','updated_at','created_at','published_at'];
     $ignoredColumnsDB = ['hotel_photo','hotel_link','address','visible' ];  // Replace these with your actual column names to ignore
-    $additionalColumns = ['course_name','category','in_city','monday','start_date', 'end_date'];  // Replace these with your actual additional column names
+    $additionalColumns = ['course_name','category','City','Upcomming','monday','Price','Currency','start_date', 'end_date'];  // Replace these with your actual additional column names
     $withEventCid = true;
     $custom_buttons = [
         (object)[
@@ -411,6 +429,32 @@ if ($_SESSION['userlevel'] > 2 ) {
             'subdiv' => 'true',
             'class' => 'float-right justify-content-end table-select',
             'selected' => $_GET['d2'] ?? '',
+          ],
+          (object)[
+            'id' => 'class',
+            'type' => 'select',
+            'options' => ['a' => 'A', 'b' => 'B', 'c' => 'C','d' => 'D'],
+            'kind' => '',
+            'size' => '4',
+            'action' => "$url"."event/view/",
+            'name' => 'class',
+            'lable' => 'Class',
+            'subdiv' => 'true',
+            'class' => 'float-right justify-content-end table-select',
+            'selected' => $_GET['class'] ?? '',
+          ],
+          (object)[
+            'id' => 'weeks',
+            'type' => 'select',
+            'options' => ['1' => '1', '2' => '2', '3' => '3','4' => '4','12'=>'12'],
+            'kind' => '',
+            'size' => '4',
+            'action' => "$url"."event/view/",
+            'name' => $DBweekname,
+            'lable' => 'Weeks',
+            'subdiv' => 'true',
+            'class' => 'float-right justify-content-end table-select',
+            'selected' => $_GET['weeks'] ?? '',
           ]
         //   ,
         //   (object)[
@@ -450,7 +494,7 @@ if ($_SESSION['userlevel'] > 2 ) {
                 .join('/');
 
             // Redirect to the specified page
-            window.location.href = "<?php echo $url; ?>event/view/" + urlParams;
+            window.location.href = "<?php echo $url; ?>event/view/" + urlParams+'/'+<?php echo isset( $_GET['searchfor']) ? $_GET['searchfor'] : '0'; ?>;
 
 
             // Make AJAX GET request
@@ -490,6 +534,7 @@ if ($_SESSION['userlevel'] > 2 ) {
         </div>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
+    <a href="javascript:history.back()" class="btn btn-primary">Back to Previous Page</a>
     <?php
     
 }

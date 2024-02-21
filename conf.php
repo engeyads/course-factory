@@ -96,7 +96,7 @@ switch ($db_name) {
         $websiteurl = "https://blackbird-training.co.uk/";
         $sitemap = "https://blackbird-training.co.uk/sitemap.xml";
         $categoriestablename = 'course_c';
-        $categoriesslug = 'programs/';
+        $categoriesslug = 'program/';
         $citiestablename = 'cities';
         $citiesslug = 'city/';
         $courseslug = 'course/';
@@ -153,9 +153,12 @@ switch ($db_name) {
         $dashedname = false;
         break;
     case "mercury arabic":
-        $categoriesimgurl = "https://mercury-training.com/ar/assets/images/gallery/";
+        $categoriesimgurl = "https://mercury-training.com/ar/assets/images/cardCategories/";
         $websiteurl = "https://mercury-training.com/ar/";
         $sitemap = "https://mercury-training.com/ar/sitemap.php";
+        $citiesimgurl = "https://mercury-training.com/ar/assets/images/cities/";
+        $citiessliderimgurl = "https://mercury-training.com/ar/assets/images/bg/";
+        $courseimgurl = "https://mercury-training.com/ar/assets/images/courses/";
         $categoriestablename = 'course_c';
         $categoriesslug = '';
         $citiestablename = 'cities';
@@ -166,9 +169,12 @@ switch ($db_name) {
         $dashedname = false;
         break;
     case "mercury english":
-        $categoriesimgurl = "https://mercury-training.com/assets/images/gallery/";
+        $categoriesimgurl = "https://mercury-training.com/assets/images/cardCategories/";
         $websiteurl = "https://mercury-training.com/";
         $sitemap = "https://mercury-training.com/sitemap.php";
+        $citiesimgurl = "https://mercury-training.com/assets/images/cities/";
+        $citiessliderimgurl = "https://mercury-training.com/assets/images/bg/";
+        $courseimgurl = "https://mercury-training.com/assets/images/courses/";
         $categoriestablename = 'course_c';
         $categoriesslug = '';
         $citiestablename = 'cities';

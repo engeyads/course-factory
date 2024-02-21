@@ -5,10 +5,10 @@ $view = ""; // This variable will hold the path to the view file
 
 
 $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
-if($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'mercuryt.mercury-training.local'){
-    $lcl = '/';
-}else{
+if($_SERVER['HTTP_HOST'] == 'admint.blackbird-training.com' || $_SERVER['HTTP_HOST'] == 'mercuryt.mercury-training.com'){
     $lcl = '';
+}else{
+    $lcl = '/';
 }
     $r->addRoute('POST', $lcl.'courses/update', function() {
         return 'tables/courses/update.php'; // Return the path as a string
@@ -142,7 +142,7 @@ if($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'mercuryt.me
     $r->addRoute('POST', $lcl.'event/updateduplicate', function() {
         return 'tables/event/updateduplicate.php'; // Return the path as a string
     });
-    $r->addRoute('GET', $lcl.'event/view/{category}/{city}/{upcomming}/{monday}/{y1}/{y2}/{m1}/{m2}/{d1}/{d2}', function($params) {
+    $r->addRoute('GET', $lcl.'event/view/{category}/{city}/{upcomming}/{monday}/{y1}/{y2}/{m1}/{m2}/{d1}/{d2}/{class}/{weeks}/{searchfor}', function($params) {
         $category = $params['category']; // Extract the category from the params array
         $city = $params['city']; // Extract the city from the params array
         $upcomming = $params['upcomming']; // Extract the upcomming from the params array
@@ -153,6 +153,9 @@ if($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'mercuryt.me
         $m2 = $params['m2']; // Extract the m2 from the params array
         $d1 = $params['d1']; // Extract the d1 from the params array
         $d2 = $params['d2']; // Extract the d2 from the params array
+        $class = $params['class']; // Extract the class from the params array
+        $weeks = $params['weeks']; // Extract the weeks from the params array
+        $searchfor = $params['searchfor']; // Extract the searchfor from the params array
         $_GET['category'] = $category; 
         $_GET['city'] = $city; 
         $_GET['upcomming'] = $upcomming; 
@@ -163,6 +166,11 @@ if($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'mercuryt.me
         $_GET['m2'] = $m2;
         $_GET['d1'] = $d1;
         $_GET['d2'] = $d2;
+        $_GET['class'] = $class;
+        $_GET['weeks'] = $weeks;
+        if($searchfor != '0'){
+            $_GET['searchfor'] = $searchfor;
+        }
         return 'tables/event/view.php'; // Return the path as a string
     });
     $r->addRoute('GET', $lcl.'event/view', function() {
@@ -273,6 +281,11 @@ if($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'mercuryt.me
     $r->addRoute('GET', $lcl.'cities/view', function() {
         return 'tables/cities/view.php'; // Return the path as a string
     });
+    $r->addRoute('GET', $lcl.'cities/view/{startpage:[0-9]+}', function($params) {
+        $startpage = $params['startpage']; // Extract the id from the params array
+        $_GET['startpage'] = $params['startpage'];
+        return 'tables/cities/view.php'; // Return the path as a string
+    });
     $r->addRoute('GET', $lcl.'cities/edit/{id:[0-9]+}', function($params) {
         $id = $params['id']; // Extract the id from the params array
         $_GET['id'] = $id; 
@@ -347,6 +360,11 @@ if($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'mercuryt.me
     });
     $r->addRoute('POST', $lcl.'seo/functions', function() {
         return 'tables/seo/functions.php'; // Return the path as a string
+    });
+    $r->addRoute('GET', $lcl.'seo/delete/{id:[0-9]+}', function($params) {
+        $id = $params['id']; // Extract the id from the params array
+        $_GET['id'] = $id; 
+        return 'tables/seo/delete.php'; // Return the path as a string
     });
 
     $r->addRoute('GET', $lcl.'profile/view', function() {

@@ -125,8 +125,34 @@ $(function() {
 	$("input[name=themeOptions]").on("change", function() {
 		const selectedTheme = $(this).val();
 		changeThemeAndStore(selectedTheme);
+		changeBGAndStore('none');
+		$(`input[name=BGOptions][value="none"]`).prop('checked', true);
 	});
 
+	function changeBGAndStore(BG) {
+		$("#pagebg").attr("class", BG);
+		if(BG!='none'){
+			changeThemeAndStore("dark-theme");
+			$(`input[name=themeOptions][value="dark-theme"]`).prop('checked', true);
+			$("aside,nav,header,.card,.sidebar-header").addClass( 'transparent');
+		}else{
+			$("aside,nav,header,.card,.sidebar-header").removeClass( 'transparent');
+		}
+		localStorage.setItem("selectedBG", BG);
+	}
+  
+	  // Check if a BG preference is stored in localStorage and apply it
+    const savedBG = localStorage.getItem("selectedBG") || "";
+	if (savedBG) {
+		changeBGAndStore(savedBG);
+		$(`input[name=BGOptions][value="${savedBG}"]`).prop('checked', true);
+	}
+  
+	  // Handle radio button clicks
+	$("input[name=BGOptions]").on("change", function() {
+		const selectedBG = $(this).val();
+		changeBGAndStore(selectedBG);
+	});
 
 	$("#headercolor1").on("click", function() {
 		$("html").addClass("color-header headercolor1"), $("html").removeClass("headercolor2 headercolor3 headercolor4 headercolor5 headercolor6 headercolor7 headercolor8")

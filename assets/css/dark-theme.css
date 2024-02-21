@@ -7,7 +7,16 @@ html.dark-theme a:hover {
 html.dark-theme a.btn {
     color:white;
 }
-html.dark-theme .card-special {
+
+html.dark-theme #timer-progress {
+	stroke: #3498db; /* Progress bar color */
+}
+  
+html.dark-theme #timer-text {
+	fill: #fff;
+}
+
+html.dark-theme .card-special.body {
     background-color: #202a40  !important;
 }
 
@@ -220,6 +229,12 @@ html.dark-theme .modal-footer {
 
     border-top: 1px solid rgb(255 255 255 / 12%);
 
+}
+
+html.dark-theme .page-item.active .page-link {
+    color: #fff;
+    text-decoration: none;
+    background: rgb(46 57 78);
 }
 
 html.dark-theme .nav-tabs .nav-item.show .nav-link, html.dark-theme .nav-tabs .nav-link.active {

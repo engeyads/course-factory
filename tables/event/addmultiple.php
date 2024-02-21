@@ -49,14 +49,16 @@ if($cid == null){
 
 //////////////////////////////////////////////////////////////// begin insertion
         // select courses with thir cities and course name query by c_id from the course table
-        $courseQuery = "SELECT * FROM course_main 
+        echo $courseQuery = "SELECT * FROM course_main 
         WHERE c_id=$c_id AND deleted_at IS NULL AND (published_at <= NOW() OR published_at IS NULL)";
         // select courses with thir cities and course name query by c_id from the course table
         // result of the query
         $courses = mysqli_query($conn2, $courseQuery);
         $course = mysqli_fetch_assoc($courses);
-        
-        $coursecQuery = "SELECT * FROM course_c WHERE id= ".$course['course_c'];
+        if($course == null){
+            continue;
+        }
+        echo $coursecQuery = "SELECT * FROM course_c WHERE deleted_at AND id= ".$course['course_c'];
         $coursec = mysqli_query($conn2, $coursecQuery);
         $coursec = mysqli_fetch_assoc($coursec);
         

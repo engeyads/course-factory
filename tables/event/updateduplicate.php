@@ -4,10 +4,23 @@
     // echo "</pre>";
     $id = $_POST['id'];
     $c_id = $_POST['c_id'];
+    $crsname = $_POST['crsname'];
+    $ctyname = $_POST['ctyname'];
     $city = $_POST['city'];
     $price = $_POST['price'];
     $start = explode('-', $_POST['startday']);
     $end = explode('-', $_POST['endday']);
+
+    $tablename = "course";
+    $userId = $_SESSION['user_id'];
+    $username = $_SESSION['username'];
+    $databasenm = $_SESSION['db_name'];
+    $replacements = array(
+        "course_main" => "Courses",
+        "course_c" => "Categories",
+        "course" => "Events",
+        "cities" => "Cities"
+    );
 
     $d1 = $start[2];
     $m1 = $start[1];
@@ -119,6 +132,29 @@
             </tr>
         </table>     -->
         <?php
+        
+        
+        $newtablename = str_replace(array_keys($replacements), array_values($replacements), $tablename);
+        $notificationSql = "INSERT INTO notifications (`user_id`, `message`, `uid`, `status`, `created_at`) VALUES ('$userId', '$username has updated a duplicated event $id: $crsname at $ctyname city - $newtablename in db: $databasenm', '$userId', 'unread', NOW())";
+        mysqli_query($conn, $notificationSql);
+        $adminSql = "SELECT id FROM users WHERE userlevel = 10";
+        $adminResult = mysqli_query($conn, $adminSql);
+        $adminUserIds = array();
+
+        if ($adminResult && mysqli_num_rows($adminResult) > 0) {
+            while ($adminRow = mysqli_fetch_assoc($adminResult)) {
+                if($adminRow['id'] != $userId){
+                    $adminUserIds[] = $adminRow['id'];
+                }
+            }
+        }
+
+        // Insert the notification for admin users
+        foreach ($adminUserIds as $adminUserId) {
+            $insertSql = "INSERT INTO notifications (`user_id`, `message`, `uid`, `status`, `created_at`) VALUES ('$adminUserId', '$username has updated a duplicated event $id: $crsname at $ctyname city - $newtablename in db: $databasenm', '$userId', 'unread', NOW())";
+            mysqli_query($conn, $insertSql);
+        }
+
         echo "success";
     }else{
         echo "error";

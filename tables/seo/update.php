@@ -1,7 +1,53 @@
-<?php
+<?php session_start();
+include '../../include/functions.php';
+include '../../include/db.php';
+if (!isset($_SESSION['db']) || empty($_SESSION['db'])) {
+    die("Error: Database session not set or empty.");
+}
+$currentDateTime = date('Y-m-d H:i:s');
+
+switch ($_SESSION['db_name']) {
+    case "blackbird-training":
+        $sitemap = "https://blackbird-training.com/site-map.php";
+        break;
+    case "blackbird-training.co.uk":
+        $sitemap = "https://blackbird-training.co.uk/sitemap.xml";
+        break;
+    case "agile4training":
+        $sitemap = "https://agile4training.com/sitemap.xml";
+        break;
+    case "agile4training ar":
+        $sitemap = "https://agile4training.com/ar/sitemap.xml";
+        break;
+    case "mercury_dubai":
+        $sitemap = "https://mercury-training.net/sitemap.php";
+        break;
+    case "mercury arabic":
+        $sitemap = "https://mercury-training.com/ar/sitemap.php";
+        break;
+    case "mercury english":
+        $sitemap = "https://mercury-training.com/sitemap.php";
+        break;
+    case "Euro Wings En":
+        $sitemap = "https://eurowingstraining.com/sitemap.php";
+        break;
+    case "Euro Wings Ar":
+        $sitemap = "https://eurowingstraining.com/Arabic/sitemap.php";
+        break;
+    case "mercury-training":
+        $sitemap = "https://mercury-training.com/sitemap.php";
+        break;
+    
+    default:
+        echo " ";
+        break;
+}
+
+
+error_reporting(E_ALL);
 if ($_SESSION['userlevel'] > 9 ) {
     // Fetch the XML content from the sitemap
-    include $path.'/conf.php';   
+    include 'conf.php';   
     if(is_array($sitemap)){
         
     foreach ($sitemap as $sitemapUrl) {
@@ -42,13 +88,20 @@ if ($_SESSION['userlevel'] > 9 ) {
                             $_POST['id'] = $row['id'];
                             $_POST['updated_at'] = $updated_at;
                             $_POST['deleted_at'] = NULL;
-                            include 'include/update.php';
+                            $sql = 'SELECT * FROM seo WHERE id = '.$_POST['id'];
+                            $result = mysqli_query($conn2, $sql);
+                            if(mysqli_num_rows($result) > 0){
+                                $sql = 'update seo set updated_at = "'.$_POST['updated_at'].'" where id = '.$_POST['id'];
+                            }
                         }
                         
                     } else {
                         // Insert new data
                         $_POST['link'] = $link;
-                        include 'include/update.php';
+                        $sql = 'INSERT INTO seo (link, updated_at) VALUES ("'.$_POST['link'].'", "'.$currentDateTime.'")';
+                        
+                        mysqli_query($conn2, $sql);
+
                     }
                     //echo 'inserted ' . $entry['loc'];
                     
@@ -60,16 +113,25 @@ if ($_SESSION['userlevel'] > 9 ) {
                 //     mysqli_query($conn2, $query);
                 // }
     
+                $res['type'] = 'Update';
+                $res['success'] = true;
+                $res['message'] = 'Data updated successfully!.';
                 //redirect to the listing page with success message in post data
                 //$_SESSION['success'] = true;
                 //$_SESSION['msg'] = 'Data updated successfully!';
                 //header('Location: view');
             } else {
+                $res['type'] = 'Update';
+                $res['success'] = false;
+                $res['message'] = 'Failed to parse sitemap XML.';
                 //$_SESSION['success'] = false;
                 //$_SESSION['msg'] = 'Failed to parse sitemap XML.';
                 //header('Location: view');
             }
         } else {
+            $res['type'] = 'Update';
+            $res['success'] = false;
+            $res['message'] = 'Failed to fetch sitemap content.';
             //$_SESSION['success'] = false;
             //$_SESSION['msg'] = 'Failed to fetch sitemap content.';
             //header('Location: view');
@@ -114,7 +176,11 @@ if ($_SESSION['userlevel'] > 9 ) {
                         $_POST['id'] = $row['id'];
                         $_POST['updated_at'] = $updated_at;
                         $_POST['deleted_at'] = NULL;
-                        include 'include/update.php';
+                        $sql = 'SELECT * FROM seo WHERE id = '.$_POST['id'];
+                            $result = mysqli_query($conn2, $sql);
+                            if(mysqli_num_rows($result) > 0){
+                                $sql = 'update seo set updated_at = "'.$_POST['updated_at'].'" where id = '.$_POST['id'];
+                            }
                         
                     } else {
                         // Insert new data
@@ -132,26 +198,51 @@ if ($_SESSION['userlevel'] > 9 ) {
                         }
                         $_POST['link'] = $link;
                         $_POST['updated_at'] = $updated_at;
-                        include 'include/update.php';
+                        $sql = 'INSERT INTO seo (link, updated_at) VALUES ("'.$_POST['link'].'", "'.$currentDateTime.'")';
+                        
+                        mysqli_query($conn2, $sql);
                     }
                 }
+
+                $res['type'] = 'Update';
+                $res['success'] = true;
+                $res['message'] = 'Data updated successfully!.';
+
                 //redirect to the listing page with success message in post data
                 //$_SESSION['success'] = true;
                 //$_SESSION['msg'] = 'Data updated successfully!';
                 //header('Location: view');
             } else {
+                $res['type'] = 'Update';
+                $res['success'] = false;
+                $res['message'] = 'Failed to parse sitemap XML.';
                 //$_SESSION['success'] = false;
                 //$_SESSION['msg'] = 'Failed to parse sitemap XML.';
                 //header('Location: view');
             }
         } else {
+            $res['type'] = 'Update';
+            $res['success'] = false;
+            $res['message'] = 'Failed to fetch sitemap content.';
             //$_SESSION['success'] = false;
             //$_SESSION['msg'] = 'Failed to fetch sitemap content.';
             //header('Location: view');
         }
     }
 
-    
+    // Clear any previously generated output
+if(isset($isLocal)){
+    header('Content-Type: application/json');
+    ob_clean();
+}
+// Echo the JSON response
+echo json_encode($res);
+
+if(isset($isLocal)){
+    ob_flush();
+}
+exit();
+
 } else {
     ?>
     <div class="alert border-0 bg-light-warning alert-dismissible fade show py-2">

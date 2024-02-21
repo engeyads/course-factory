@@ -1,108 +1,154 @@
-<?php
-if ($_SESSION['userlevel'] > 9 ) {
-  
+<?php if ($_SESSION['userlevel'] > 2 ) { 
+  $adminajaxview = true;
+  $folderName =  basename(__DIR__); 
     $path = dirname(__FILE__);
-    include $path.'/conf.php';   
-    $ignoredColumns = ['deleted_at','published_at'];
-    $tooltips = [];
-    $popups = [];
-    $jsonarrays = [];
-    $urlPaths = ['link' => 'link'];
-    //$gsc = ['indexed' => 's_alias'];
-    $fieldTitles = ['LastCrawlTime' => 'Last Crawl Time','IndexingState'=>'Indexing State'];
-    $dateColumns = ['created_at', 'updated_at','speed_date','google_date','yandex_date','bing_date','LastCrawlTime']; // replace with your actual date columns
-    $custom_buttons = [
-      // (object)[
-      //     'id' => 'google_sitemap',
-      //     'type' => 'button',
-      //     'kind' => 'URL',
-      //     'action' => 'check_google_sitemap',
-      //     'name' => 'resubmit google sitemap',
-      // ],
-      // (object)[
-      //   'id' => 'yandex_sitemap',
-      //   'type' => 'button',
-      //   'kind' => 'URL',
-      //   'action' => 'check_yandex_sitemap',
-      //   'name' => 'resubmit yandex sitemap',
-      // ],
-      // (object)[
-      //   'id' => 'bing_sitemap',
-      //   'type' => 'button',
-      //   'kind' => 'URL',
-      //   'action' => 'check_bing_sitemap',
-      //   'name' => 'resubmit bing sitemap',
-      // ],
-      (object)[
-        'id' => 'cron_index',
-        'type' => 'button',
-        'kind' => 'URL',
-        'action' => 'google_cron',
-        'name' => 'Check Google Index',
-        'class' => '',
-      ],
-      (object)[
-        'id' => 'cron_speed',
-        'type' => 'button',
-        'kind' => 'URL',
-        'action' => 'speed_cron',
-        'name' => 'Check Page Speed',
-        'class' => '',
-      ],
-      // Add more objects as needed
-    ];
-    $dataArrays = [       
-      // 'google_index' => ['0'=>'<div class="td-container d-flex justify-content-between align-items-center"><span class="badge bg-danger">not indexed</span></div>','1'=>'<div class="td-container d-flex justify-content-between align-items-center"><span class="badge bg-success">indexed</span></div>',''=>'<div class="td-container d-flex justify-content-between align-items-center"><span class="badge bg-secondary">not checked</span></div>'],
-      // 'yandex_index' => ['0'=>'<div class="td-container d-flex justify-content-between align-items-center"><span class="badge bg-danger">not indexed</span></div>','1'=>'<div class="td-container d-flex justify-content-between align-items-center"><span class="badge bg-success">indexed</span></div>',''=>'<div class="td-container d-flex justify-content-between align-items-center"><span class="badge bg-secondary">not checked</span></div>'],
-      // 'bing_index' => ['0'=>'<div class="td-container d-flex justify-content-between align-items-center"><span class="badge bg-danger">not indexed</span></div>','1'=>'<div class="td-container d-flex justify-content-between align-items-center"><span class="badge bg-success">indexed</span></div>',''=>'<div class="td-container d-flex justify-content-between align-items-center"><span class="badge bg-secondary">not checked</span></div>'],
-        // Add more column mappings here
-    ];
-    $imagePaths = [];
-    $urlslug = '';
-    $custom_button_title = 'Update SEO Data';
-    $no_edits = true;
-    $pagelength = 25;
-    $ajaxview= false;
-//     $costumeQuery = "SELECT *,CONCAT(
-//       '<div class=\"td-container d-flex justify-content-between align-items-center\">',
-//       '<span class=\"badge ',
-//       IF(speed_test IS NOT NULL AND speed_test < 0.90, 'bg-danger',
-//         IF(speed_test >= 0.90 AND speed_test < 0.95, 'bg-orange',
-//             IF(speed_test IS NULL, 'bg-secondary', 'bg-success')
-//         )
-//       ),
-//       '\">',
-//       IF(speed_test IS NOT NULL AND speed_test != 'checked', CONCAT(CAST(speed_test * 100 AS DECIMAL(10, 2)), '%'), 'not checked'),
-//       '</span>',
-//       '</div>'
-//   ) AS speed_test 
-// FROM seo";
+include $path.'/conf.php'; ?>
+        <script src="<?php echo $url;?>assets/plugins/datetimepicker/js/picker.js"></script>
+        <script src="<?php echo $url;?>assets/plugins/datetimepicker/js/picker.date.js"></script>
+        <div class="row">
+    <div class="col-10">
+        <h1>Fix Price</h1>
+    </div>
+    
+</div>
+<span id="fsd" class="btn btn-primary float-right justify-content-end" rel="noopener noreferrer">Fetch Sitemap Data</span>
+<div class="row">
+    <div class="col-10 d-inline-flex"></div>
+    <div class="col-2 ">
+        <!-- <a href="<?php //echo $url ; ?>event/fixdurations/auto" class="btn btn-primary float-right justify-content-end">Automatic <i class="lni lni-reload"></i></a> -->
+    </div>
+</div>
+
+<hr />
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <div >
+                <!-- Table -->
+                <table id='empTable' class='table table-striped table-bordered dataTable no-footer display dataTable'>
+                    <thead>
+                        <tr>
+                            <th style="width:50%">Id</th>
+                            <th style="width:3%">Link</th>
+                            <th style="width:13%">Updated At</th>
+                            <th style="width:13%">Speed Test</th>
+                            <th style="width:3%">Speed Date</th>
+                            <th style="width:3%">Google Index</th>
+                            <th style="width:3%">Indexing State</th>
+                            <th style="width:3%">Verdict</th>
+                            <th style="width:3%">Coverage State</th>
+                            <th style="width:3%">Robots Txt State</th>
+                            <th style="width:3%">Last Crawl Time</th>
+                            <th style="width:3%">Page Fetch State</th>
+                            <th style="width:3%">Google Canonical</th>
+                            <th style="width:3%">Google Date</th>
+                            <th style="width:3%">Created At</th>
+                            <th style="width:3%"></th>
+                        </tr>
+                    </thead>
+                <!-- Your table content will be filled by DataTables -->
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        var dataTable = $('#empTable').DataTable({
+                'processing': true,
+                'serverSide': true,
+                'serverMethod': 'POST',
+                'headers': {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-Requested-Session': '<?php echo session_id(); ?>'
+                },
+                'ajax': {
+                    'url':'/tables/seo/get_seo.php',
+                    'type': 'POST',
+                    'data': function (data) {
+                        data.start = data.start;
+                        data.length = data.length;
+                    }
+                    
+                },
+            columns: [
+                { data: 'Id' },
+                { data: 'Link' },
+                { data: 'UpdatedAt' },
+                { data: 'SpeedTest' },
+                { data: 'SpeedDate' },
+                { data: 'GoogleIndex' },
+                { data: 'IndexingState' },
+                { data: 'Verdict' },
+                { data: 'CoverageState' },
+                { data: 'RobotsTxtState' },
+                { data: 'LastCrawlTime' },
+                { data: 'PageFetchState' },
+                { data: 'GoogleCanonical' },
+                { data: 'GoogleDate' },
+                { data: 'CreatedAt' },
+                { data: 'Delete'},
+            ],
+            "columnDefs": [
+                // { "visible": false, "targets": [8,9,10 ] },
+                { "orderable": false, "targets": [15 ] }
+            ],
+            // Add paging options
+            lengthMenu: [[10, 25, 50, 100, 200, 500, -1], [10, 25, 50, 100, 200, 500,'All']],
+            pageLength: 10,
+            dom: 'lBfrtip',
+            buttons: [
+                'copy','excel' //{
+                    // extend: 'excel',
+                    // exportOptions: {
+                    //     columns: [<?php //foreach ($columnNamesdisplay as $columnName){ ?>'<?php //echo $columnName ?>', <?php //} ?>] 
+                    // }
+                //}
+                , 'pdf', 'print'
+            ]
+
+            // Add any additional DataTable options as needed
+        });
 
 
-if(isset($_SESSION['success'])){
-  if($_SESSION['success'] == true){
-    $success = 'success';
-    $icon = 'bi bi-check-circle-fill';
-  }else{
-    $success = 'danger';
-    $icon = 'bi bi-exclamation-triangle-fill';
-  }
-  ?>
-  <div class="alert border-0 bg-light-<?php echo $success; ?> alert-dismissible fade show py-2">
-      <div class="d-flex align-items-center">
-          <div class="fs-3 text-<?php echo $success; ?>"><i class="<?php echo $icon; ?>"></i>
-          </div>
-          <div class="ms-3">
-          <div class="text-<?php echo $success; ?>"><?php echo $_SESSION['msg']; ?></div>
-          </div>
-      </div>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-  <?php
-  unset($_SESSION['success']); // Clear session variable
-  unset($_SESSION['msg']);     // Clear session variable
-}
-    include 'include/view.php';
+        $(document).on('click', '.delete-link', function(event) {
+        event.preventDefault();
+
+        var id = $(this).data('id');
+        if (confirm('Are you sure you want to delete this items?')) {
+          $.ajax({
+            type: 'GET',
+            data: {
+                id: id
+            },
+            url: '<?php echo $url . 'seo/delete' ?>/'+id,
+            contentType: 'application/x-www-form-urlencoded',
+            success: function(response) {
+                if (response.success == true) {
+                    success_noti("successully deleted.")
+                    dataTable.draw(false);
+                } else {
+                    error_noti(response.message);
+                }
+            },
+            error: function() {
+                error_noti("Failed to delete the row.");
+                success = false;
+            }
+          });
+            
+        }
+    });
+      });
+        // setInterval(function() {
+        //     dataTable.draw(false);
+        // }, 10000); // 10000 milliseconds = 10 seconds
+        
+
+    // Initialize end date picker
+</script>
+<?php
+
     include 'include/logview.php';
 ?>
 <script>
@@ -231,6 +277,25 @@ if(isset($_SESSION['success'])){
     bing.find('.td-container').append(buttonCell4);
   });
     $(document).ready(function() {
+
+      $(document).on('click', '#fsd', function () {
+        $.ajax({
+          url: "<?php echo $url;?>tables/seo/update.php",
+          type: "GET",
+          success: function(response) {
+            if(response.success == true){
+              success_noti(response.message)
+            }else{
+              error_noti(response.message);
+            }
+          },
+          error: function(response) {
+            error_noti(response.message);
+          }
+        });
+      })
+      
+
       $(document).on('click', '.custom_buttons button', function () {
         var action = $(this).data("action");
         var input = $(this).parent().find("input").val();
@@ -277,7 +342,7 @@ if(isset($_SESSION['success'])){
       }
       });
 
-      $(document).on('click', '#example2 button', function () {
+      $(document).on('click', '#empTable span', function () {
         // Make an AJAX request to the PHP script
         var beforeElement = this.previousElementSibling;
         var nextElement = this.parentNode.parentNode.nextElementSibling;
@@ -385,6 +450,10 @@ if(isset($_SESSION['success'])){
         });
       });
     });
+
+    
+
+
 </script>
 <?php
 }else{
@@ -400,6 +469,7 @@ if(isset($_SESSION['success'])){
       </div>
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
+  <a href="javascript:history.back()" class="btn btn-primary">Back to Previous Page</a>
   <?php
 
 }

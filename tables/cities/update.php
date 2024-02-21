@@ -1,7 +1,12 @@
 <?php
 if ($_SESSION['userlevel'] > 2 ) {
     $path = dirname(__FILE__);
-    include $path.'/conf.php';   
+    include $path.'/conf.php';
+    if(isset($_POST['published_at']) ){
+        if($_POST['published_at'] == '' || $_POST['published_at'] == '00-00-0000' || $_POST['published_at'] == '0000-00-00' || $_POST['published_at'] == '0000-00-00 00:00:00' || $_POST['published_at'] == null){
+            unset($_POST['published_at']);
+        }
+    }
     if (!isset($_POST['monday']) ){ $_POST['monday'] = '0'; }else{ if($_POST['monday'] !='1'){$_POST['monday'] = '0';} }
     if (!isset($_POST['x']) ){ $_POST['x'] = '0'; }else{ if(!is_numeric($_POST['x'])){ $_POST['x'] = '0'; } }
     if (!isset($_POST['x_b']) ){ $_POST['x_b'] = '0'; }else{ if(!is_numeric($_POST['x_b'])){ $_POST['x_b'] = '0'; } } 

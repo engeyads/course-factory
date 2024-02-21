@@ -116,9 +116,9 @@
                     <li>
                         <a href="<?php echo $url; ?>seo/view"><i class="bi bi-circle"></i>View</a>
                     </li>
-                    <li>
+                    <!-- <li>
                         <a href="<?php echo $url; ?>seo/edit"><i class="bi bi-circle"></i>update</a>
-                    </li>
+                    </li> -->
                 </ul>
             </li>
             <li>

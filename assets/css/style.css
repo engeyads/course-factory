@@ -26,6 +26,37 @@ File: style.css
 
 /* General */
 
+/* Margin */
+.m-0 { margin: 0!important; }
+.mt-0 { margin-top: 0!important; }
+.mr-0 { margin-right: 0!important; }
+.mb-0 { margin-bottom: 0!important; }
+.ml-0 { margin-left: 0!important; }
+
+.m-1 { margin: 0.25rem!important; }
+.mt-1 { margin-top: 0.25rem!important; }
+.mr-1 { margin-right: 0.25rem!important; }
+.mb-1 { margin-bottom: 0.25rem!important; }
+.ml-1 { margin-left: 0.25rem!important; }
+
+/* Repeat for m-2, m-3, etc. */
+
+/* Padding */
+.p-0 { padding: 0!important; }
+.pt-0 { padding-top: 0!important; }
+.pr-0 { padding-right: 0!important; }
+.pb-0 { padding-bottom: 0!important; }
+.pl-0 { padding-left: 0!important; }
+
+.p-1 { padding: 0.25rem!important; }
+.pt-1 { padding-top: 0.25rem!important; }
+.pr-1 { padding-right: 0.25rem!important; }
+.pb-1 { padding-bottom: 0.25rem!important; }
+.pl-1 { padding-left: 0.25rem!important; }
+
+/* Repeat for p-2, p-3, etc. */
+
+
 body {
     font-size: 14px;
 	color: #4c5258;
@@ -35,16 +66,70 @@ body {
     overflow-x: hidden;
 }
 
-#loading-overlay {
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:800);
 
+/* CSS */
+#timer-container {
+	position: relative;
+	width: 50px;
+	height: 50px;
+  }
+  
+  #timer-svg {
+	position: absolute;
+	top: 0;
+	left: 0;
+  }
+  
+  #timer-progress {
+	fill: none;
+	stroke-width: 20;
+	stroke-dasharray: 565; /* Circumference of the circle (2 * π * radius) */
+	stroke-dashoffset: 0;
+	transform: rotate(-90deg);
+	transform-origin: center;
+	transition: spin 1s linear;
+  }
+  
+  #timer-text {
+	font-size: 24px;
+  }
+  
+  
+.timer-container {
+  width: 400px;
+}
+
+.path--background {
+  fill: rgb(34, 213, 201);
+  stroke: #fff;
+  stroke-width: 0px;
+}
+
+.pulse {
+  fill: rgb(255, 74, 74) !important;
+}
+
+.path--foreground {
+  fill: #eee;
+  stroke: #eee;
+  stroke-width: 2px;
+}
+
+.label {
+  font: 20px "Open Sans";
+  font-weight: 900;
+  text-anchor: middle;
+  fill: rgb(34, 213, 201);
+}
+
+#loading-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background-color: #1a2232; /* Semi-transparent white background */
-	background-image: url(../images/bg.webp); /* Replace 'your-background-image.jpg' with the actual image path */
-	background-size: cover;
 	justify-content: center;
     align-items: center;
     z-index: 1000; /* Ensure the overlay is on top */
@@ -54,7 +139,10 @@ body {
     -ms-user-select: none; /* Internet Explorer/Edge */
     -webkit-user-select: none; /* Chrome, Safari, and Opera */
 }
-
+.loadingbackground{	
+	background-image: url(../images/bg.webp); /* Replace 'your-background-image.jpg' with the actual image path */
+	background-size: cover;
+}
 #loading-content {
   	max-width: fit-content;
 	max-height: fit-content;
@@ -81,6 +169,29 @@ body {
     margin-bottom: 20px; /* Adjust the margin as needed */
 }
 
+.card1 {
+    background: linear-gradient(to bottom right, #8e44ad, #2980b9);
+	color:#fff;
+}
+
+.card2 {
+    background: linear-gradient(to bottom right, #e74c3c, #c0392b);
+	color:#fff;
+}
+
+.card3 {
+    background: linear-gradient(to bottom right, #e67e22, #d35400);
+	color:#fff;
+}
+
+.card4 {
+    background: linear-gradient(to bottom right, #3498db, #2980b9);
+	color:#fff;
+}
+.nodecoration {
+    text-decoration: none; /* Remove underline for the italicized part */
+}
+
 .logos{
 	display: flex;
 	text-align: justify;
@@ -98,7 +209,13 @@ body {
 	justify-content: center; /* Center the dots horizontally */
     align-items: center; /* Center the dots vertically */
 }
-
+#pagebg {
+	position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
 .dot {
     width: 15px;
     height: 15px;
@@ -2101,4 +2218,80 @@ body {
     width: 100%;
     line-height: 20px; /* Vertically centers the text */
     color: #fff; /* Text color */
+}
+
+#header-notifications-list {
+	max-height: 300px; /* Adjust the height as needed */
+	overflow-y: auto;
+  }
+
+  .notification-item {
+	max-height: 60px; /* Adjust the height as needed */
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+#loading-indicator {
+    display: none;
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-top: 4px solid #007bff;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 10px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+  /* Hide the default radio button */
+.switcher input[type="radio"] {
+	display: none;
+}
+
+
+
+  /* Style for each image label */
+.switcher .image-label {
+	position: relative;
+	cursor: pointer;
+}
+
+  /* Style for the image itself */
+.switcher .image-label img {
+	width: 120px; /* Adjust the width as needed */
+	height: auto;
+	border: 2px solid transparent; /* Border for selected image */
+}
+
+  /* Style for the selected image */
+.switcher .image-label input[type="radio"]:checked + img {
+	border-color: #007BFF; /* Change the border color for the selected image */
+}
+
+.image1{
+	background: url(../bg-themes/1.png) no-repeat center!important;
+}
+.image2{
+	background: url(../bg-themes/2.png) no-repeat center!important;
+}
+.image3{
+	background: url(../bg-themes/3.png) no-repeat center!important;
+}
+.image4{
+	background: url(../bg-themes/4.png) no-repeat center!important;
+}
+.image5{
+	background: url(../bg-themes/5.png) no-repeat center!important;
+}
+.image6{
+	background: url(../bg-themes/6.png) no-repeat center!important;
+}
+.transparent{
+	background: rgba(0, 0, 0, 0.2) no-repeat center!important;
 }

@@ -10,9 +10,15 @@ html.semi-dark a.btn {
     color:white;
 }
 
+html.semi-dark #timer-progress {
+	stroke: #3498db; /* Progress bar color */
+}
+  
+html.semi-dark #timer-text {
+	fill: #333;
+}
 
-
-html.semi-dark .card-special {
+html.semi-dark .card-special.body {
     background-color: #d3e4ff !important;
 }
 

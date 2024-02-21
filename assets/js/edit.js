@@ -10,7 +10,7 @@ $(document).ready(function() {
                 var min = parseInt(countspan.attr('data-min'));
                 var max = parseInt(countspan.attr('data-max'));
                 if(textLength < min || textLength > max) {
-                    alert('Field ' + id + ' is not within the valid character count range!');
+                    error_noti('Field ' + id + ' is not within the valid character count range!');
                     e.preventDefault();
                     return false; // this will stop the loop
                 }

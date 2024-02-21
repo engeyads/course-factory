@@ -27,7 +27,7 @@ $(function () {
 		hoverColor: '#009efb',
 		markers: [{
 			latLng: [21.00, 78.00],
-			name: 'I Love My India'
+			name: 'I Love My Gaza'
 		}],
 		hoverOpacity: null,
 		normalizeFunction: 'linear',

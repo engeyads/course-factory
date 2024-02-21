@@ -21,7 +21,7 @@
           AND cities.$citypricecell =$cityprice;";
         $result = mysqli_query($conn2, $sql);
         if($result){
-                $response = 'success';
+                $response = $result;
                 header("Refresh: 0; url=" . $url . "event/editprice");
         }else{
                 $response = 'error';

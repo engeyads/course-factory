@@ -6471,7 +6471,7 @@
 			}
 	
 			if ( type == 'alert' ) {
-				alert( msg );
+				error_noti( msg );
 			}
 			else if ( type == 'throw' ) {
 				throw new Error(msg);

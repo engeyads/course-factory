@@ -1,5 +1,7 @@
 <?php
 // Query the admin_log table
+if($_SESSION['userlevel'] > 9){
+  
 
 if(!isset($adminajaxview)){
     $adminajaxview = false;
@@ -50,7 +52,7 @@ if(!isset($adminajaxview)){
         
 
             $(document).ready(function(){
-                $('#empTable1').DataTable({
+                var adminTable = $('#empTable1').DataTable({
                     'processing': true,
                     'serverSide': true,
                     'order': [[6, 'desc']],
@@ -60,7 +62,7 @@ if(!isset($adminajaxview)){
                         'X-Requested-Session': '<?php echo session_id(); ?>'
                     },
                     'ajax': {
-                        'url':'/include/adminajaxfile.php',
+                        'url':'<?php if(isset($isLocal)){ echo $url; }else{ echo '/'; } ?>include/adminajaxfile.php',
                         'data': function (data) {
                             data.start = data.start;
                             data.length = data.length;
@@ -85,6 +87,10 @@ dom: 'lBfrtip',
             'copy', 'excel', 'pdf', 'print'
         ]
                 });
+
+                setInterval(function() {
+                    adminTable.draw(false);
+                }, 10000); // 10000 milliseconds = 10 seconds
             });
         </script>
             <?php 
@@ -131,3 +137,8 @@ dom: 'lBfrtip',
         </div>
     </div>
 </div>
+<?php
+    }else{
+
+    }
+?>

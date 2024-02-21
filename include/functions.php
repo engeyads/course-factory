@@ -117,12 +117,12 @@ function generateTableSelect($conn) {
     $username = $_SESSION['username']; // Get the username from the session
     // Check if the user level is 10 or above
     if ($userlevel >= 10) {
-        $query = "SELECT id, name FROM db WHERE deleted_at IS NULL";
+        $query = "SELECT id, name FROM db WHERE deleted_at IS NULL ORDER BY sortorder ASC";
     } else {
         $query = "SELECT d.id, d.name FROM db AS d 
                   INNER JOIN user_db AS ud ON d.id = ud.db_id 
                   INNER JOIN users AS u ON u.id = ud.user_id 
-                  WHERE u.username = '" . mysqli_real_escape_string($conn, $username) . "' AND d.deleted_at IS NULL";
+                  WHERE u.username = '" . mysqli_real_escape_string($conn, $username) . "' AND d.deleted_at IS NULL ORDER BY d.sortorder ASC";
     }
     $result = mysqli_query($conn, $query);
     // Check if query execution was successful
@@ -164,7 +164,60 @@ function GetRow($id,$fieldname, $tablename , $conn2){
         }
     }
 }
+function GetNextRow($id, $fieldname, $tablename, $conn2) {
+  if ($id) {
+      // Query to find the next ID
+      $nextIdQuery = "SELECT * FROM `$tablename` WHERE `$fieldname` > '$id' ORDER BY `$fieldname` ASC LIMIT 1";
+      $result = mysqli_query($conn2, $nextIdQuery);
 
+      if ($result && mysqli_num_rows($result) > 0) {
+          // If a next ID exists, return it
+          return mysqli_fetch_assoc($result);
+      } else {
+          // If no next ID, find the first ID in the table
+          $firstIdQuery = "SELECT * FROM `$tablename` ORDER BY `$fieldname` ASC LIMIT 1";
+          $result = mysqli_query($conn2, $firstIdQuery);
+
+          if ($result && mysqli_num_rows($result) > 0) {
+              // Return the first ID row
+              return mysqli_fetch_assoc($result);
+          } else {
+              // Return an empty array if the table is empty
+              return [];
+          }
+      }
+  } else {
+      // If ID is not provided or is null, return an error or empty array as per your error handling policy
+      return "Error: ID is not provided.";
+  }
+}
+function GetPrevRow($id, $fieldname, $tablename, $conn2) {
+  if ($id) {
+      // Query to find the next ID
+      $nextIdQuery = "SELECT * FROM `$tablename` WHERE `$fieldname` < '$id' ORDER BY `$fieldname` desc LIMIT 1";
+      $result = mysqli_query($conn2, $nextIdQuery);
+
+      if ($result && mysqli_num_rows($result) > 0) {
+          // If a next ID exists, return it
+          return mysqli_fetch_assoc($result);
+      } else {
+          // If no next ID, find the first ID in the table
+          $firstIdQuery = "SELECT * FROM `$tablename` ORDER BY `$fieldname` desc LIMIT 1";
+          $result = mysqli_query($conn2, $firstIdQuery);
+
+          if ($result && mysqli_num_rows($result) > 0) {
+              // Return the first ID row
+              return mysqli_fetch_assoc($result);
+          } else {
+              // Return an empty array if the table is empty
+              return [];
+          }
+      }
+  } else {
+      // If ID is not provided or is null, return an error or empty array as per your error handling policy
+      return "Error: ID is not provided.";
+  }
+}
 // function select whole table return array of rows
 function GetForSelect($tablename , $conn2, $idname='id', $name='name' , $order= '',$page=0,$limit=''){
   $limit = $limit ? " LIMIT $page , $limit " : '';
@@ -216,22 +269,32 @@ function TextasJsonArray($text) {
 }
 function FormsStart() {
     global $id , $url , $folderName,$tabletitle,$updateurl;
+    if (isset($GLOBALS['buttonnext'])) {
+      global $buttonnext;
+    }else{
+      $buttonnext = '';
+    }
+    if (isset($GLOBALS['customClass'])) {
+      global $customClass;
+    }else{
+      $customClass = '';
+    }
     if (isset($_POST['message'])) {
       $response = json_decode($_POST['message'], true);
       if ($response) {
           if ($response['success']) {
-              echo '<div class="alert alert-success">' . $response['message'] . '</div>';
+              echo 'success_noti("' . $response['message'] . '");';
           } else {
-              echo '<div class="alert alert-danger">' . $response['message'] . '</div>';
+              echo 'error_noti("' . $response['message'] . '");';
           }
       }
   }
     echo '<div class="row">
     <div id="messageDiv"></div>  
         <div class="  mx-auto">
-            <h1>' . ($id ? "Edit " : "Add ") . $tabletitle . '</h1>
+            <h1>' . ($id ? "Edit " : "Add ") . $tabletitle . '</h1>'.$buttonnext.'
             <hr/>
-            <div class="card">
+            <div class="card '.$customClass.'">
                 <div class="card-body"> ';
     echo '<script>var validate = true;</script><form id="theform" method="post" action=" '. $url.$folderName.'/'.$updateurl.'" enctype="multipart/form-data" class="row g-3">';
     if ($id) {
@@ -335,7 +398,7 @@ function FormsInput($name, $title, $type, $required = false, $class = '', $count
                           $("#theform").submit();
                       }
                     '.(!$nullable ? '}else{
-                      $(this).parent().parent().find("#modalBodyContenttitle #loadingMessage").after("<div class=\"alert alert-danger\">'.$title.' is required.</div>");
+                      error_noti("'.$title.' is required.");
                       
                     }' : '').'
                 }
@@ -595,10 +658,10 @@ function FormsImg($name, $title,  $class , $url, $colnm,$tblname,$remoteDirector
                   $("#imagePreview'.$name.'").hide();
                   $("#uploadButton'.$name.'").hide();
                 } else {
-                  alert("Upload failed: " + response'.$name.'.message);
+                  error_noti("Upload failed: " + response'.$name.'.message);
                 }
               } else {
-                alert("Upload failed. Please try again.");
+                error_noti("Upload failed. Please try again.");
               }
             };
             xhr'.$name.'.send(formData'.$name.');
@@ -925,10 +988,10 @@ function FormsImg($name, $title,  $class , $url, $colnm,$tblname,$remoteDirector
                 $("#imagePreview'.$name.'").hide();
                 $("#uploadButton'.$name.'").hide();
               } else {
-                alert("Upload failed: " + response'.$name.'.message);
+                error_noti("Upload failed: " + response'.$name.'.message);
               }
             } else {
-              alert("Upload failed. Please try again.");
+              error_noti("Upload failed. Please try again.");
             }
           };
           xhr'.$name.'.send(formData'.$name.');
@@ -1225,7 +1288,7 @@ function FormsText($name, $title, $type,$validby, $required = false, $class = ''
                           $("#theform").submit();
                       }
                     '.(!$nullable ? '}else{
-                      $(this).parent().parent().find("#modalBodyContenttitle #loadingMessage").after("<div class=\"alert alert-danger\">'.$title.' is required.</div>");
+                      error_noti("'.$title.' is required.");
                       
                     }' : '').'
                 }
@@ -1324,7 +1387,7 @@ function FormsEditor($name, $title, $type, $required = false, $class = '' , $ai 
                             $("#theform").submit();
                         }
                       '.(!$nullable ? '}else{
-                        $(this).parent().parent().find("#modalBodyContenttitle #loadingMessage").after("<div class=\"alert alert-danger\">'.$title.' is required.</div>");
+                        error_noti("'.$title.' is required.");
                         
                       }' : '').'
                   
@@ -1503,7 +1566,7 @@ function FormsCheck($name, $title, $type, $required = false,$vl='1', $class = ''
     form.submit();
   } else {
     var messageDiv = document.getElementById('messageDiv');
-    messageDiv.innerHTML = '<div class=\'alert alert-danger\'>There are some fields that are not valid! Please fix them and try again.</div>';
+    error_noti(\'There are some fields that are not valid! Please fix them and try again.\')';
   }
 });
 </script>
@@ -1635,13 +1698,26 @@ function getImagesInFolderpst($ftpServer,$ftpConnection,$column ,$colnm,$tablena
     $path = parse_url($url, PHP_URL_PATH);
     $path = rtrim($path, '/');
     $parts = explode('/', $path);
-    if (count($parts) >= 4) {
-      $remoteDirectory = $parts[2];
-      echo $lastPart = end($parts);
-    } else {
-      $remoteDirectory = $parts[1];
-      echo $lastPart = end($parts);
+    if (in_array('ar',$parts)){
+      if (count($parts) >= 4) {
+          $remoteDirectory = $parts[3];
+          echo $lastPart = end($parts);
+        
+      } else {
+        $remoteDirectory = $parts[2];
+        echo $lastPart = end($parts);
+      }
+    }else{
+      if (count($parts) >= 4) {
+          $remoteDirectory = $parts[2];
+          echo $lastPart = end($parts);
+        
+      } else {
+        $remoteDirectory = $parts[1];
+        echo $lastPart = end($parts);
+      }
     }
+    echo '<br>'.$remoteDirectory.'/'.$lastPart;
     
     $images = array();
     $fileList = ftp_nlist($ftpConnection, $remoteDirectory.'/'.$lastPart);
@@ -1651,12 +1727,16 @@ function getImagesInFolderpst($ftpServer,$ftpConnection,$column ,$colnm,$tablena
                 $selected = [];
                 $filename = pathinfo($file, PATHINFO_FILENAME).'.webp';
 
-                $stmt = $conn2->prepare("SELECT `$colnm` FROM `$tablename` WHERE `$column` = ?");
-                $stmt->bind_param("s", $filename);
-                $stmt->execute();
-                $result = $stmt->get_result();
-              
-                if ($result->num_rows > 0) {
+                $escapedFilename = mysqli_real_escape_string($conn2,$filename);
+
+                $query = "SELECT `$colnm` FROM `$tablename` WHERE `$column` = '$escapedFilename'";
+                $result = mysqli_query($conn2, $query);
+                
+                if (!$result) {
+                    die('Error in executing query: ' . mysqli_error($conn2));
+                }
+
+                if (mysqli_num_rows($result) > 0) {
                     while ($row = $result->fetch_assoc()) {
                         $names = $row[$colnm];
                 
@@ -1668,7 +1748,7 @@ function getImagesInFolderpst($ftpServer,$ftpConnection,$column ,$colnm,$tablena
                     }
                 }
 
-                $stmt->close();
+                mysqli_free_result($result);
 
                 $file = parse_url($file, PHP_URL_PATH);
                 $file = rtrim($file, '/');

@@ -3,24 +3,25 @@ $adminajaxview = true;
 
 $start = isset($_POST['start']) ? intval($_POST['start']) : 0;
 $length = isset($_POST['length']) ? intval($_POST['length']) : 10;
-if(!isset($ajaxview))       {       $ajaxview = false; }
-if(!isset($tablename))      {      $tablename = '';    }
-if(!isset($tabletitle))     {     $tabletitle = '';    }
-if(!isset($folderName))     {     $folderName = '';    }
-if(!isset($urlslug))        {        $urlslug = '';    }
-if(!isset($maxlenginfield)) { $maxlenginfield = '';    }
-if(!isset($theconnection))  {  $theconnection = '';    }
-if(!isset($thedbname))      {      $thedbname = '';    }
-if(!isset($no_edits))       {       $no_edits = 0;     }
-if(!isset($no_link))        {       $no_link = 0;      }
-if(!isset($pagelength))     {     $pagelength = 100;   }
-if(!isset($imagePaths))     {     $imagePaths = [''];  }
-if(!isset($urlPath))        {     $urlPath = null;     }
-if(!isset($withEventCid))   {   $withEventCid = false; }
-if(!isset($searchsColumns)) { $searchsColumns = false; }
-if(!isset($pageend))        {       $pageend = '';     }
-if(!isset($dashedname))     {   $dashedname = false;   }
-if(!isset($editPath))     {   $editPath = false;   }
+if(!isset($ajaxview))         {       $ajaxview = false; }
+if(!isset($tablename))        {      $tablename = '';    }
+if(!isset($tabletitle))       {     $tabletitle = '';    }
+if(!isset($folderName))       {     $folderName = '';    }
+if(!isset($urlslug))          {        $urlslug = '';    }
+if(!isset($maxlenginfield))   { $maxlenginfield = '';    }
+if(!isset($theconnection))    {  $theconnection = '';    }
+if(!isset($thedbname))        {      $thedbname = '';    }
+if(!isset($no_edits))         {       $no_edits = 0;     }
+if(!isset($no_link))          {       $no_link = 0;      }
+if(!isset($pagelength))       {     $pagelength = 100;   }
+if(!isset($imagePaths))       {     $imagePaths = [''];  }
+if(!isset($urlPath))          {     $urlPath = null;     }
+if(!isset($withEventCid))     {   $withEventCid = false; }
+if(!isset($searchsColumns))   { $searchsColumns = false; }
+if(!isset($pageend))          {       $pageend = '';     }
+if(!isset($_GET['startpage'])){       $startpage = 1;    }else{ $startpage = $_GET['startpage']; }
+if(!isset($dashedname))       {   $dashedname = false;   }
+if(!isset($editPath))         {   $editPath = false;     }
 
 // Check if the 'category' parameter exists in the GET request
 $allowedParameters = ['category', 'city', 'upcomming','monday'];
@@ -249,15 +250,15 @@ if (isset($_POST['message'])) {
                     } 
                     ?>
                     <?php if($no_link != true){ ?>
-                        <th>Link</th>
+                        <th></th>
                         <?php } if($no_edits != true){ ?>
-                        <th>Edit</th>
+                        <th></th>
                         <?php
                         if ($_SESSION['userlevel'] > 2 ) {
-                            echo '<th>Trash</th>';
+                            echo '<th></th>';
                         }
                         if ($_SESSION['userlevel'] > 9 ) { ?>
-                        <th>Delete</th>
+                        <th></th>
                         <?php } ?>
                         <?php } ?>
                     </tr>
@@ -279,8 +280,32 @@ if (isset($_POST['message'])) {
                 ?>
         };
        <?php } ?>
+       var empTable = $('#empTable').DataTable({});
             $(document).ready(function(){
-                $('#empTable').DataTable({
+                filltable();
+                // let Link = empTable.column('Link:name').index();
+                // let Edit = empTable.column('Edit:name').index();
+                // let Trash = empTable.column('Trash:name').index();
+                // let Delete = empTable.column('Delete:name').index();
+
+                // empTable.DataTable({
+                //     "columnDefs": [
+                //         // { "visible": false, "targets": [empTable.column('Link:name').index(),empTable.column('Edit:name').index(), empTable.column('Trash:name').index(), empTable.column('Delete:name').index()] },
+                //         { "orderable": false, "targets": [empTable.columns().count() - 4, empTable.columns().count() - 3, empTable.columns().count() - 2, empTable.columns().count() - 1] }
+                //     ]
+                // });
+
+                var searchValue = '<?php echo isset($_GET['searchfor']) ? $_GET['searchfor'] : ''; ?>';
+                if (searchValue) {
+                    empTable.search(searchValue).draw();
+                }
+                setInterval(function() {
+                    empTable.draw(false);
+                }, 10000); // 10000 milliseconds = 10 seconds
+            });
+            function filltable(){
+                empTable.destroy();
+                empTable = $('#empTable').DataTable({
                     'processing': true,
                     'serverSide': true,
                     'serverMethod': 'post',
@@ -289,7 +314,7 @@ if (isset($_POST['message'])) {
                         'X-Requested-Session': '<?php echo session_id(); ?>'
                     },
                     'ajax': {
-                        'url':'/include/ajaxfile.php',
+                        'url':'<?php if(isset($isLocal)){ echo $url; }else {echo '/' ;} ?>include/ajaxfile.php',
                         'data': function (data) {
                             data.start = data.start;
                             data.length = data.length;
@@ -368,7 +393,12 @@ if (isset($_POST['message'])) {
         // Add paging options
         lengthMenu: [[10, 25, 50, 100, 200, 500, -1], [10, 25, 50, 100, 200, 500,'All']],
         pageLength: 25,
-dom: 'lBfrtip',
+        dom: 
+        "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+        "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>" +
+        "<'row'<'col-sm-12'tr>>" +
+        "<'row'<'col-sm-12 col-md-6'l>>"+
+        "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>" ,
         buttons: [
             'copy','excel' //{
                 // extend: 'excel',
@@ -378,15 +408,18 @@ dom: 'lBfrtip',
             //}
             , 'pdf', 'print'
         ],
-        columnDefs: [
-            {
-                targets: ['Edit', 'Trash', 'Delete'], // Column names you want to hide
-                visible: false,
-                searchable: false
+        "columnDefs": [
+            // { "visible": false, "targets": [empTable.column('Link:name').index(),empTable.column('Edit:name').index(), empTable.column('Trash:name').index(), empTable.column('Delete:name').index()] },
+            { "orderable": false, "targets": [<?php if($no_link !=true && $_SESSION['userlevel'] > 9){ ?>empTable.columns().count() - 4,empTable.columns().count() - 3, empTable.columns().count() - 2, empTable.columns().count() - 1<?php }elseif($no_link !=true && $_SESSION['userlevel'] > 2){ ?>empTable.columns().count() - 3,empTable.columns().count() - 2, empTable.columns().count() - 1<?php } elseif($no_link !=true){ ?>empTable.columns().count() - 2,empTable.columns().count() - 1<?php } ?> ] }
+        ],
+        "initComplete": function () {
+            // Use a timeout to delay setting the page
+            setTimeout(function() {
+                empTable.page(<?php echo $startpage - 1; ?>).draw('page');
+            }, 100);
+        }});
             }
-        ]
-                });
-            });
+            
         </script>
             <?php }else{ ?>
             <table id="example2" class="table table-striped table-bordered" style="width:100%">
@@ -448,15 +481,15 @@ dom: 'lBfrtip',
                             title="<?php echo htmlspecialchars($tooltipContent); ?>"><?php echo $cellContent; ?></td>
                         <?php elseif (in_array($columnName, $popups) && in_array($columnName, $jsonarrays)) : ?>
                         <?php $popupContent = $content[$columnName] ?? ''; // Check if $content[$columnName] is set, otherwise set $popupContent to an empty string
-if ($popupContent !== null) {
-    $popupContent = json_decode($popupContent, true);
-    if (is_array($popupContent)) {
-        $popupValues = array_column($popupContent, 'value');
-        $popupContent = implode("<br>", $popupValues);
-    } else {
-        $popupContent = $popupContent['value'] ?? '';
-    }
-} ?> 
+                        if ($popupContent !== null) {
+                            $popupContent = json_decode($popupContent, true);
+                            if (is_array($popupContent)) {
+                                $popupValues = array_column($popupContent, 'value');
+                                $popupContent = implode("<br>", $popupValues);
+                            } else {
+                                $popupContent = $popupContent['value'] ?? '';
+                            }
+                        } ?> 
                         <?php $cellContent = $cellContent !== null && strlen($cellContent) >  $maxlenginfield ? substr($cellContent, 0, $maxlenginfield) . '...' : $cellContent; ?>
                         <?php $btnContent = strlen($popupContent) > $maxlenginfield ? substr($popupContent, 0, $maxlenginfield) . '...' : $popupContent;   
                             $btnContent = strip_tags($btnContent); 
@@ -624,19 +657,18 @@ $(document).ready(function() {
     $(document).on('click', '.delete-link', function(event) {
         event.preventDefault();
         if (confirm('Are you sure you want to delete this item?')) {
-            deleteItem($(this).data('id'));
-            $(this).closest('tr').remove();
+            let success = deleteItem($(this).data('id'));
+            if(success){
+                $(this).closest('tr').remove();
+            }
         }
     });
 
     $(document).on('click', '.trash-link', function(event) {
     event.preventDefault();
     var $this = $(this); // Cache the jQuery object
-    if (confirm('Are you sure you want to delete this item?')) {
+    if (confirm('Are you sure you want to trash this item?')) {
          trashItem($(this).data('id'),$(this)) ;
-        
-            
-        
     }
 });
 
@@ -700,29 +732,24 @@ function showPopup(content,subject) {
 
   // Function to handle delete action
   function deleteItem(id) {
-    // Make an AJAX request to the delete endpoint
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState === 4) {
-        if (xhr.status === 200) {
-          // Successful deletion
-          var response = JSON.parse(xhr.responseText);
-          localStorage.setItem('message', response.message);
-          if (response.type !== 'Delete') {
-                    // Refresh the page
-                    // window.location.reload();
-          }
-          // Optionally, update the view or perform any other actions
-        } else {
-          // Error occurred during deletion
-          alert('An error occurred while deleting the item.');
-        }
-      }
-    };
 
-    xhr.open('GET', '/<?php echo $folderName; ?>/<?php echo $deleteslug ; ?>/'+id, true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.send();
+    $.ajax({
+            type: 'GET',
+            url: '<?php echo $url . $folderName . '/' . $deleteslug . '/' ?>' + id,
+            contentType: 'application/x-www-form-urlencoded',
+            success: function(response) {
+                if (response.message == "Delete successful." ) {
+                    success_noti("successully deleted.")
+                    empTable.draw(false);
+                } else {
+                    error_noti(response.message);
+                }
+            },
+            error: function() {
+                error_noti("Failed to delete the row.");
+                success = false;
+            }
+        });
   }
 
   // Function to handle trash action
@@ -735,19 +762,17 @@ function showPopup(content,subject) {
             success: function(response) {
                 console.log( response.un);
                 if (response.un ) {
-                    $this.html('<i class="bi bi-trash"></i>');
-                    $this.closest('tr').removeClass('text-decoration-line-through text-danger');
-                    $this.closest('tr').find('td').removeClass('text-decoration-line-through text-danger');
-                    $this.closest('tr').find('td').find('span').removeClass('text-decoration-line-through text-danger');
+                    success_noti("successully untrashed.")
                 } else {
-                    $this.html('<i class="bi bi-arrow-counterclockwise text-danger"></i>');
-                    $this.closest('tr').addClass('text-decoration-line-through text-danger');
-                    $this.closest('tr').find('td').addClass('text-decoration-line-through text-danger');
-                    $this.closest('tr').find('td').find('span').addClass('text-decoration-line-through text-danger');
+                    success_noti("successully trashed.")
+                }
+                empTable.draw(false);
+                if (typeof adminTable !== 'undefined') {
+                    adminTable.draw(false);
                 }
             },
             error: function() {
-                alert('An error occurred while deleting the item.');
+                error_noti("Failed to trash the row.");
             }
         });
     }

@@ -143,4 +143,93 @@
     echo $recordscntlstpgs = 0;
   }
   echo "</div>";
+
+  // durations
+  $querycntpgs = "SELECT COUNT(*) AS cnt
+  FROM (
+      SELECT TIMESTAMPDIFF(DAY, CONCAT(y1, '-', m1, '-', d1), CONCAT(y2, '-', m2, '-', d2)) + 1 AS days_diff
+      FROM `course`
+      LEFT JOIN course_main ON course.c_id = course_main.c_id
+      HAVING (days_diff != 5 AND days_diff != 12 AND days_diff != 18 AND days_diff != 26)
+  ) AS subquery;";
+  $recordscntpgs = mysqli_query($conn2, $querycntpgs);
+  echo "<div id='durations'>";
+  if($row_cntcrs = mysqli_num_rows($recordscntpgs)){
+
+      echo $recordscntpgs = $recordscntpgs->fetch_object()->cnt;
+  }else{
+
+      echo $recordscntpgs = 0;
+  }
+  echo "</div>";
+
+  // durationstotal
+  $querycntlstpgs = "SELECT COUNT(*) AS cnt
+  FROM (
+      SELECT TIMESTAMPDIFF(DAY, CONCAT(y1, '-', m1, '-', d1), CONCAT(y2, '-', m2, '-', d2)) + 1 AS days_diff
+      FROM `course`
+      LEFT JOIN course_main ON course.c_id = course_main.c_id
+      WHERE `course`.`created_at` >= DATE_SUB(NOW(), INTERVAL 1 WEEK) HAVING (days_diff != 5 AND days_diff != 12 AND days_diff != 18 AND days_diff != 26)
+  ) AS subquery;";
+  $recordscntlstpgs = mysqli_query($conn2, $querycntlstpgs);
+  echo "<div id='durationslast'>";
+  if($row_cntlstcrs = mysqli_num_rows($recordscntlstpgs)){
+    // echo $recordscntlstpgs = round((($recordscntpgs > 0) ? ((32 / $recordscntcrss) * 100) : 0), 2);
+    echo $recordscntlstpgs = $recordscntlstpgs->fetch_object()->cnt;
+  }else{
+    echo $recordscntlstpgs = 0;
+  }
+  echo "</div>";
+
+  // oldevents
+  $querycntpgs = "SELECT COUNT(*) AS cnt FROM `course` LEFT JOIN course_main ON course.c_id = course_main.c_id WHERE TIMESTAMP(CONCAT(y1, '-', LPAD(m1, 2, '0'), '-', LPAD(d1, 2, '0'))) <= CURDATE()";
+  $recordscntpgs = mysqli_query($conn2, $querycntpgs);
+  echo "<div id='oldevents'>";
+  if($row_cntcrs = mysqli_num_rows($recordscntpgs)){
+
+      echo $recordscntpgs = $recordscntpgs->fetch_object()->cnt;
+  }else{
+
+      echo $recordscntpgs = 0;
+  }
+  echo "</div>";
+
+  // oldeventstotal
+  $querycntlstpgs = "SELECT COUNT(*) AS cnt FROM `course` LEFT JOIN course_main ON course.c_id = course_main.c_id WHERE TIMESTAMP(CONCAT(y1, '-', LPAD(m1, 2, '0'), '-', LPAD(d1, 2, '0'))) <= CURDATE() AND course.created_at >= DATE_SUB(NOW(), INTERVAL 1 WEEK)";
+  $recordscntlstpgs = mysqli_query($conn2, $querycntlstpgs);
+  echo "<div id='oldeventslast'>";
+  if($row_cntlstcrs = mysqli_num_rows($recordscntlstpgs)){
+    // echo $recordscntlstpgs = round((($recordscntpgs > 0) ? ((32 / $recordscntcrss) * 100) : 0), 2);
+    echo $recordscntlstpgs = $recordscntlstpgs->fetch_object()->cnt;
+  }else{
+    echo $recordscntlstpgs = 0;
+  }
+  echo "</div>";
+
+    // duplicatedevents
+    $querycntpgs = "SELECT count(*) as cnt, id AS ids_to_delete, id, c_id, city, price,d1, m1, y1, d2, m2, y2, DATE(TIMESTAMP(CONCAT(course.y1, '-', LPAD(course.m1, 2, '0'), '-', LPAD(course.d1, 2, '0')))) AS start_date, DATE(TIMESTAMP(CONCAT(course.y2, '-', LPAD(course.m2, 2, '0'), '-', LPAD(course.d2, 2, '0')))) AS end_date FROM course WHERE (c_id, d1, m1, y1, d2, m2, y2, city) IN ( SELECT c_id, d1, m1, y1, d2, m2, y2, city FROM course GROUP BY c_id, d1, m1, y1, d2, m2, y2, city HAVING COUNT(*) > 1)";
+    $recordscntpgs = mysqli_query($conn2, $querycntpgs);
+    echo "<div id='duplicatedevents'>";
+    if($row_cntcrs = mysqli_num_rows($recordscntpgs)){
+  
+        echo $recordscntpgs = $recordscntpgs->fetch_object()->cnt/2;
+    }else{
+  
+        echo $recordscntpgs = 0;
+    }
+    echo "</div>";
+  
+    // duplicatedeventstotal
+    $querycntlstpgs = "SELECT count(*) as cnt, id AS ids_to_delete, id, c_id, city, price,d1, m1, y1, d2, m2, y2, DATE(TIMESTAMP(CONCAT(course.y1, '-', LPAD(course.m1, 2, '0'), '-', LPAD(course.d1, 2, '0')))) AS start_date, DATE(TIMESTAMP(CONCAT(course.y2, '-', LPAD(course.m2, 2, '0'), '-', LPAD(course.d2, 2, '0')))) AS end_date FROM course WHERE (c_id, d1, m1, y1, d2, m2, y2, city) IN ( SELECT c_id, d1, m1, y1, d2, m2, y2, city FROM course WHERE course.created_at >= DATE_SUB(NOW(), INTERVAL 1 WEEK) GROUP BY c_id, d1, m1, y1, d2, m2, y2, city HAVING COUNT(*) > 1)";
+    $recordscntlstpgs = mysqli_query($conn2, $querycntlstpgs);
+    echo "<div id='duplicatedeventslast'>";
+    if($row_cntlstcrs = mysqli_num_rows($recordscntlstpgs)){
+      // echo $recordscntlstpgs = round((($recordscntpgs > 0) ? ((32 / $recordscntcrss) * 100) : 0), 2);
+      echo $recordscntlstpgs = $recordscntlstpgs->fetch_object()->cnt/2;
+    }else{
+      echo $recordscntlstpgs = 0;
+    }
+    echo "</div>";
+    
+    
 ?>

@@ -8,7 +8,16 @@ html.light-theme a:hover {
 html.light-theme a.btn {
     color:white;
 }
-html.light-theme .card-special {
+
+html.light-theme #timer-progress {
+	stroke: #dadada; /* Progress bar color */
+}
+  
+html.light-theme #timer-text {
+	fill: #333;
+}
+
+html.light-theme .card-special.body {
     background-color: #dadada !important;
 }
 html.light-theme table.table-striped tbody tr:nth-of-type(odd) {

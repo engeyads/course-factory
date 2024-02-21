@@ -6,6 +6,15 @@ if (!isset($_SESSION['db']) || empty($_SESSION['db'])) {
     die("Error: Database session not set or empty.");
 }
 
+// $dbname = $_SESSION['db_name'];
+// if($dbname == 'blackbird-training'){
+//     $linksSelect = " alias.id as alid, alias.alias as alalias, alias.url as alurl, alias.keywords alias.ar_keywords as alar_keywords, alias.ar_description as alar_description, alias.ar_title as alar_title, alias.description as aldescription, alias.title as altitle, alias.date as aldate, alias.ip as alip, ";
+//     $linksJoin = " LEFT JOIN alias ON alias.id = course.c_id ";
+//     $linksWhere = "";
+// }else{
+//     $linksJoin = "";
+//     $linksWhere = "";
+// }
 error_reporting(E_ALL);
 $lvl = $_SESSION['userlevel'];
 ## Read value
@@ -244,27 +253,27 @@ while ($row = mysqli_fetch_assoc($empRecords)) {
             } else {
                 $popupContent = $popupContent['value'] ?? '';
             }
-            $btnContent = strip_tags($cellContent);
+            $btnContent = strip_tags(html_entity_decode($cellContent));
             if ($cellContent !== null && strlen($cellContent) > $maxlenginfield) {
-                $cellContent = mb_substr($cellContent, 0, $maxlenginfield, 'UTF-8') . '...';
-                $btnContent = mb_strlen($popupContent, 'UTF-8') > $maxlenginfield ? mb_substr($popupContent, 0, $maxlenginfield, 'UTF-8') . '...' : $popupContent;
-                $btnContent = strip_tags($btnContent);
+                $cellContent = mb_substr(strip_tags(html_entity_decode($cellContent)), 0, $maxlenginfield, 'UTF-8') . '...';
+                $btnContent = mb_strlen($popupContent, 'UTF-8') > $maxlenginfield ? mb_substr(strip_tags(html_entity_decode($popupContent)), 0, $maxlenginfield, 'UTF-8') . '...' : $popupContent;
+                $btnContent = strip_tags(html_entity_decode($btnContent));
                 $btnContent = htmlspecialchars($btnContent, ENT_QUOTES);
             }
             $rowData[$columnName] = '<button type="button" class="btn btn-secondary m-0 p-2"
             onclick="showPopup(\''. htmlspecialchars($popupContent, ENT_QUOTES) . '\',\'' . $columnName . '\')">' . $btnContent . '</button>';
         } elseif ($cellContent && $popups && in_array($columnName, $popups)) {
             $popupContent = $row[$columnName]; 
-            $popupContent = strip_tags($popupContent);
+            $popupContent = strip_tags(html_entity_decode($popupContent));
             $popupContent = str_replace('"', '\"', $popupContent);
             $popupContent = str_replace("'", "\'", $popupContent);
             $popupContent = str_replace("\n", "<br>", $popupContent);
 
             if ($cellContent !== null && mb_strlen($cellContent, 'UTF-8') > $maxlenginfield) {
-                $btnContent = mb_strlen((string)$cellContent, 'UTF-8') > $maxlenginfield ? mb_substr($cellContent, 0, $maxlenginfield, 'UTF-8') . '...' : $cellContent; 
+                $btnContent = mb_strlen((string)$cellContent, 'UTF-8') > $maxlenginfield ? mb_substr(strip_tags(html_entity_decode($cellContent)), 0, $maxlenginfield, 'UTF-8') . '...' : $cellContent; 
             }
             
-            $rowData[$columnName] = '<button type="button" class="btn btn-secondary m-0 p-2 popup-btn" data-content="' . htmlspecialchars($popupContent, ENT_QUOTES) .'" data-subject="' . $columnName .'">' . $btnContent .'</button>';
+            $rowData[$columnName] = '<button type="button" class="btn btn-secondary m-0 p-2 popup-btn" data-content="' . htmlspecialchars($popupContent, ENT_QUOTES) .'" data-subject="' . $columnName .'">' . (isset($btnContent) ? $btnContent : '') .'</button>';
             }elseif ($columnName === $gsc['indexed']){
                 $indexingStatus = checkIndexingStatus($urlslug . $urlValue);
                 $rowData[$columnName] =  '<td class="' . $deleteclass . '">' . $indexingStatus . '</td>';
@@ -277,7 +286,7 @@ while ($row = mysqli_fetch_assoc($empRecords)) {
         }
     }
     if(!$nolink){
-          $urlVal = $row[$urlPath];
+          $urlVal = isset($row[$urlPath]) ? $row[$urlPath] : 'undefined';
             if ($dashedname) {
                 // Remove special characters and replace spaces with dashes
                 $cleanedName = preg_replace('/[^A-Za-z0-9\-]/', '', str_replace(' ', '-', $urlVal));
@@ -285,23 +294,23 @@ while ($row = mysqli_fetch_assoc($empRecords)) {
                 if (preg_match('/[^A-Za-z0-9]$/', $urlVal)) {
                     $cleanedName .= '-';
                 }
-                $rowData['Link'] = '<a target="_blank" href="' . $urlslug . $cleanedName. $pageend.'"><i class="lni lni-world"></i></a>';
+                $rowData['Link'] = '<a target="_blank" href="' . $urlslug . $cleanedName. $pageend.'"><i class="btn btn-info bx bx-world"></i></a>';
             } else {
-               $rowData['Link'] = '<a target="_blank" href="' . $urlslug . $urlVal. $pageend.'"><i class="lni lni-world"></i></a>';
+               $rowData['Link'] = '<a target="_blank" href="' . $urlslug . $urlVal. $pageend.'"><i class="btn btn-info bx bx-world"></i></a>';
             }
     }
     if(!$noedits){
         $rowData['Edit'] = '<a target="_blank" href="'.$url . $folderName . '/'. $editslug . ($withEventCid ? '/'.$row['c_id'] : '') .'/' . $row['id'] .'">
-            <i class="bi bi-pencil-square"></i>
+            <i class="btn btn-warning bx bx-edit"></i>
         </a>';
         if ($lvl > 2) {
-            $rowData['Trash'] = '<a target="_blank" href="#" class="trash-link" data-id="'.$row['id'] .'" class="confirmAction">'
-                . (($row['deleted_at'] == NULL) ? '<i class="bi bi-trash "></i>' : '<i class="bi bi-arrow-counterclockwise text-danger"></i>')
-                . '</a>';
+            $rowData['Trash'] = '<span target="_blank" class="trash-link" data-id="'.$row['id'] .'" class="confirmAction">'
+                . (($row['deleted_at'] == NULL) ? '<i class="btn btn-danger bi bi-trash-fill"></i>' : '<i class="btn btn-danger bi bi-arrow-counterclockwise "></i>')
+                . '</span>';
         }
         
         if ($lvl > 9) {
-            $rowData['Delete'] = '<a target="_blank" href="#" class="delete-link" data-id="'.$row['id'] .'"><i class="bi bi-x "></i></a>';
+            $rowData['Delete'] = '<span target="_blank" class="delete-link" data-id="'.$row['id'] .'"><i class="btn btn-danger bi bi-x-circle-fill"></i></span>';
         }
     }
     // Add the trash and delete links if the userlevel condition is met
@@ -317,5 +326,11 @@ $response = array(
     "iTotalDisplayRecords" => $totalRecordwithFilter,
     "aaData" => $data
 );
-
+if(isset($isLocal)){
+    header('Content-Type: application/json');
+    ob_clean();
+}
 echo json_encode($response);
+if(isset($isLocal)){
+    ob_flush();
+}

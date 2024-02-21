@@ -44,14 +44,14 @@ include 'conf.php';
 <div id="loading-overlay">
   <div id="loading-content">
     <center>
-    <div class="logos">
+    <!-- <div class="logos">
       <div>
-        <img src="<?php echo $url; ?>assets/images/logo-icon.png" class="loading-logo" alt="logo icon">
+        <img src="<?php //echo $url; ?>assets/images/logo-icon.png" class="loading-logo" alt="logo icon">
       </div>
       <div>
-        <h4 class="loading-text"><?php echo $appname; ?></h4>
+        <h4 class="loading-text"><?php //echo $appname; ?></h4>
       </div>
-    </div>
+    </div> -->
     
         <div class="loading-dots">
             <div class="dot"></div>
@@ -61,7 +61,7 @@ include 'conf.php';
       </center>
     </div>
 </div>
-
+<div id="pagebg"></div>
 
 <div class="wrapper">
 <?php include 'layout/header.php';?>
@@ -115,8 +115,17 @@ include 'conf.php';
 	<script src="<?php echo $url; ?>assets/plugins/bootstrap-material-datetimepicker/js/moment.min.js"></script>
 	<script src="<?php echo $url; ?>assets/plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.min.js"></script>
   <script src="<?php echo $url; ?>assets/js/form-date-time-pickes.js"></script>
+  <script src="<?php echo $url; ?>assets/plugins/vectormap/jvectormap.custom.js"></script>
+  <script src="<?php echo $url; ?>assets/plugins/vectormap/jquery-jvectormap-2.0.2.min.js"></script>
+  <script src="<?php echo $url; ?>assets/plugins/vectormap/jquery-jvectormap-au-mill.js"></script>
+  <script src="<?php echo $url; ?>assets/plugins/vectormap/jquery-jvectormap-in-mill.js"></script>
+  <script src="<?php echo $url; ?>assets/plugins/vectormap/jquery-jvectormap-uk-mill-en.js"></script>
+  <script src="<?php echo $url; ?>assets/plugins/vectormap/jquery-jvectormap-us-aea-en.js"></script>
+  <script src="<?php echo $url; ?>assets/plugins/vectormap/jquery-jvectormap-world-mill-en.js"></script>
+  
   <script src="https://apis.google.com/js/api.js"></script>
   <!--app-->
+  
   <script src="<?php echo $url; ?>assets/js/app.js"></script>
   <script>
     function setSessionDB(tableId) {
@@ -133,6 +142,8 @@ include 'conf.php';
         };
         xhr.send('db=' + tableId);
     }
+
+   
 </script>
   <?php 
   if (isset($conn)){

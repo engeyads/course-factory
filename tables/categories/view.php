@@ -184,6 +184,7 @@ if ($_SESSION['userlevel'] > 2 ) {
         </div>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
+        <a href="javascript:history.back()" class="btn btn-primary">Back to Previous Page</a>
     <?php
 }
 ?>

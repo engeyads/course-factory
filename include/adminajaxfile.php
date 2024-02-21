@@ -1,11 +1,15 @@
 <?php
 session_start();
+if($_SESSION['userlevel'] > 9){
+    
+
 include 'functions.php';
 include 'db.php';
 
 if (!isset($_SESSION['db']) || empty($_SESSION['db'])) {
     die("Error: Database session not set or empty.");
 }
+
 error_reporting(E_ALL);
 $lvl = $_SESSION['userlevel'];
 ## Read value
@@ -19,8 +23,8 @@ $columnNames = explode(",", $_POST['columns']); // Convert the comma-separated s
 $columnSortOrder = $_POST['order'][0]['dir']; // asc or desc
 $searchValue = mysqli_real_escape_string($conn2, $_POST['search']['value']); // Search value
 $maxlenginfield =20;
-$tooltips = ['title'];
-$popups = ['description', 'keyword', 'text', 'about','broshoure','overview'];
+$tooltips = ['title','ar_title','sub_title','ar_sub_title'];
+$popups = ['description','ar_description', 'keyword','ar_keyword','sitekeywords','ar_sitekeywords','sitekeywords_ar', 'text','ar_text','text_ar', 'about','ar_about','broshoure','ar_broshoure','overview','ar_overview'];
 $jsonarrays = ['keyword', 'xx'];
 
 ## Search 
@@ -104,7 +108,7 @@ while ($row = mysqli_fetch_assoc($empRecords)) {
             $btnContent = strip_tags($cellContent);
             if ($cellContent !== null && mb_strlen($cellContent, 'UTF-8') > $maxlenginfield) {
                 $cellContent = mb_substr($cellContent, 0, $maxlenginfield, 'UTF-8') . '...';
-                $btnContent = mb_strlen($popupContent, 'UTF-8') > $maxlenginfield ? mb_substr($popupContent, 0, $maxlenginfield, 'UTF-8') . '...' : $popupContent;
+                $btnContent = mb_strlen($popupContent, 'UTF-8') > $maxlenginfield ? mb_substr(strip_tags(html_entity_decode($popupContent)), 0, $maxlenginfield, 'UTF-8') . '...' : $popupContent;
                 $btnContent = strip_tags($btnContent);
                 $btnContent = htmlspecialchars($btnContent, ENT_QUOTES);
             }
@@ -113,15 +117,14 @@ while ($row = mysqli_fetch_assoc($empRecords)) {
         } elseif ($cellContent && $popups && $popup && ($columnName == 'newData' || $columnName == 'oldData')) {
             $popupContent = $row[$columnName]; 
             $popupContent = strip_tags($popupContent);
-            $popupContent = str_replace('"', '\"', $popupContent);
-            $popupContent = str_replace("'", "\'", $popupContent);
-            $popupContent = str_replace("\n", "<br>", $popupContent);
+            $popupContent = str_replace(['"',"'"], '', str_replace(["\n","\r"], "<br>", $popupContent));
+
 
             if ($cellContent !== null && mb_strlen($cellContent, 'UTF-8') > $maxlenginfield) {
-                $btnContent = mb_strlen((string)$cellContent, 'UTF-8') > $maxlenginfield ? mb_substr($cellContent, 0, $maxlenginfield, 'UTF-8') . '...' : $cellContent; 
+                $btnContent = mb_strlen((string)$cellContent, 'UTF-8') > $maxlenginfield ? mb_substr(strip_tags(html_entity_decode($cellContent)), 0, $maxlenginfield, 'UTF-8') . '...' : $cellContent; 
             }
             
-            $rowData[$columnName] = '<button type="button" class="btn btn-secondary m-0 p-2 popup-btn" data-content="' . htmlspecialchars($popupContent, ENT_QUOTES) .'" data-subject="' . $columnName .'">' . $btnContent .'</button>';
+            $rowData[$columnName] = '<button type="button" class="btn btn-secondary m-0 p-2 popup-btn" data-content="' . str_replace(["\'",'\"','\'',"\"",'"', "'",'\\r'], '', str_replace(["\\n"], '<br>',htmlspecialchars($popupContent, ENT_QUOTES))) .'" data-subject="' . $columnName .'">' . str_replace(["\'",'\"','\'',"\"",'"', "'", "\r","\\r", "\n","\\n", "\t","\\t"], '',(isset($btnContent) ? $btnContent : 'undefined')) .'</button>';
             }else {
                 // If the cell content does not contain "webp", use the regular value
                 $rowData[$columnName] = '<span >'.$row[$columnName].'</span>';
@@ -145,6 +148,30 @@ $response = array(
     "iTotalDisplayRecords" => $totalRecordwithFilter,
     "aaData" => $data
 );
-
+if(isset($isLocal)){
+    header('Content-Type: application/json');
+    ob_clean();
+}
 echo json_encode($response);
+if(isset($isLocal)){
+    ob_flush();
+}
+}else{
+    $response = array(
+        "draw" => 0,
+        "iTotalRecords" => 0,
+        "iTotalDisplayRecords" => 0,
+        "aaData" => 'Access Denied!'
+    );
+    if(isset($isLocal)){
+        header('Content-Type: application/json');
+        ob_clean();
+    }
 
+    
+    echo json_encode($response);
+    if(isset($isLocal)){
+        ob_flush();
+    }
+
+}

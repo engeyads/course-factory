@@ -7,6 +7,8 @@
             $minShortCode = 1;
             $maxShortCode = 4;
             $urlslug = $websiteurl .$categoriesslug;
+            $imgcolumn = 's_alias';
+            $urlPath = 's_alias';
             break;
         case "agile4training ar":
             $imagePaths = ['glyphicon' => $categoriesimgurl];
@@ -15,6 +17,8 @@
             $minShortCode = 1;
             $maxShortCode = 4;
             $urlslug = $websiteurl .$categoriesslug;
+            $imgcolumn = 's_alias';
+            $urlPath = 's_alias';
             break;
         case "mercury_dubai":
             $urlslug = '';
@@ -23,6 +27,8 @@
             $minShortCode = 1;
             $maxShortCode = 2;
             $imagePaths = ['image' => $categoriesimgurl];
+            $imgcolumn = 's_alias';
+            $urlPath = 's_alias';
             break;
         case "mercury arabic":
             $urlslug = $websiteurl .$categoriesslug;
@@ -30,15 +36,20 @@
             $maxTitleChar = 60;
             $minShortCode = 1;
             $maxShortCode = 2;
-            $imagePaths = ['image' => $categoriesimgurl];
-        break;
+            $imagePaths = ['glyphicon' => $categoriesimgurl];
+            $imgcolumn = 'alias';
+            $urlPath = 'name';
+            $dashedname = true;
+            break;
         case "mercury english":
             $urlslug = $websiteurl .$categoriesslug;
             $minTitleChar=40;
             $maxTitleChar = 60;
             $minShortCode = 1;
             $maxShortCode = 2;
-            $imagePaths = ['image' => $categoriesimgurl];
+            $imagePaths = ['glyphicon' => $categoriesimgurl];
+            $imgcolumn = 'alias';
+            $urlPath = 'alias';
             break;
         case "mercury-training":
             $urlslug = $websiteurl .$categoriesslug;
@@ -47,6 +58,8 @@
             $minShortCode = 1;
             $maxShortCode = 2;
             $imagePaths = ['glyphicon' => $categoriesimgurl];
+            $imgcolumn = 's_alias';
+            $urlPath = 'alias';
             break;
         case "Euro Wings En":
             $urlslug = $websiteurl .$categoriesslug;
@@ -55,6 +68,8 @@
             $minShortCode = 1;
             $maxShortCode = 2;
             $imagePaths = ['image' => $categoriesimgurl];
+            $imgcolumn = 's_alias';
+            $urlPath = 's_alias';
             break;
         case "Euro Wings Ar":
             $urlslug = $websiteurl .$categoriesslug;
@@ -63,6 +78,8 @@
             $minShortCode = 1;
             $maxShortCode = 2;
             $imagePaths = ['image' => $categoriesimgurl];
+            $imgcolumn = 's_alias';
+            $urlPath = 's_alias'; 
             break;
         case "blackbird-training.co.uk":
             $urlslug = $websiteurl .$categoriesslug;
@@ -71,6 +88,8 @@
             $minShortCode = 1;
             $maxShortCode = 4;
             $imagePaths = ['glyphicon' => $categoriesimgurl];
+            $imgcolumn = 's_alias';
+            $urlPath = 's_alias';
             break;
         case "blackbird-training":
             $urlslug = $websiteurl .$categoriesslug;
@@ -79,6 +98,8 @@
             $minShortCode = 1;
             $maxShortCode = 2;
             $imagePaths = ['glyphicon' => $categoriesimgurl];
+            $imgcolumn = 's_alias';
+            $urlPath = 's_alias';
             break;
         default:
             echo " ";

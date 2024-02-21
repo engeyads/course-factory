@@ -17,19 +17,21 @@
 
 <hr />
 <div class="card">
+<?php if($auto){ ?>
+    <div id="timer-container">
+  <svg id="timer-svg" width="200" height="200">
+    <circle id="timer-progress" cx="100" cy="100" r="90"></circle>
+    <text id="timer-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle">
+      <tspan id="timer-seconds">5</tspan>
+      <tspan> s</tspan>
+    </text>
+  </svg>
+</div>
+<?php } ?>
     <div class="card-body">
         <script src="<?php echo $url; ?>assets/makitweb/jquery-3.3.1.min.js"></script>
         <script src="<?php echo $url; ?>assets/makitweb/DataTables/datatables.min.js"></script>
-        <?php
-        // get all course group by d1,m1,y1 and d2,m2,y2
-        $query = "SELECT course.id, course.d1, course.m1, course.y1, course.d2, course.m2, course.y2, course_main.$DBweekname,
-                TIMESTAMPDIFF(DAY, CONCAT(y1, '-', m1, '-', d1), CONCAT(y2, '-', m2, '-', d2)) + 1 AS days_diff 
-                FROM `course` 
-                left join course_main on course.c_id = course_main.c_id
-                HAVING (days_diff != 5 AND days_diff != 12 AND days_diff != 18 AND days_diff != 26) limit 25";
-
-        $result = mysqli_query($conn2, $query);
-        if ($result && mysqli_num_rows($result) > 0) { ?>
+        
         <div class="table-responsive">
             <div id="example_wrapper" class="dataTables_wrapper dt-bootstrap5">
             <table id="example" class="table table-striped table-bordered" style="width:100%">
@@ -41,88 +43,75 @@
                         <th>weeks</th>
                         <th>duration</th>
                         <?php if(!$auto){ ?>   
-                            <th></th>
-                            <th></th>
+                            <th>standard</th>
+                            <th>save</th>
                         <?php } ?>
                         <!-- <th>count</th> -->
                     </tr>
                 </thead>
                 <tbody>
-                <?php while ($row = mysqli_fetch_assoc($result)) { 
-                    switch ($row[$DBweekname]){
-                        case 2:
-                        $daysdration = 11;
-                        break;
-                        case 3:
-                        $daysdration = 17;
-                        break;
-                        case 4:
-                        $daysdration = 25;
-                        break;
-                        // default case is 1
-                        default: $daysdration = 4;
-                    }?>
-                    <tr>
-                        <input type="hidden" name="id" value="<?php echo $id = $row['id']; ?>">
-                        <input type="hidden" name="currentDuration" value="<?php echo $days_diff = $row['days_diff']; ?>">
-                        <td><?php echo $id; ?></td>
-                        <?php
-                        $d1 = $row['d1'];
-                        $m1 = $row['m1'];
-                        $y1 = $row['y1'];
-                        ?>
-                        <td><?php echo $y1.'-'.$m1.'-'.$d1; ?></td>
-                        <?php
-                        $d2 = $row['d2'];
-                        $m2 = $row['m2'];
-                        $y2 = $row['y2'];
-                        ?>
-                        <td><?php echo $y2.'-'.$m2.'-'.$d2; ?></td>
-                        <td><?php echo $weeks = $row[$DBweekname]; ?></td>
-                        
-                        <?php 
-
-                        // echo '<td>'.$row_count = $row['row_count'];echo '</td>';
-                    
-                    if($auto){
-
-                        $sqls = "UPDATE course 
-                        SET 
-                            d2 = DAY(DATE_ADD(CONCAT(y1, '-', m1, '-', d1), INTERVAL $daysdration DAY)),
-                            m2 = MONTH(DATE_ADD(CONCAT(y1, '-', m1, '-', d1), INTERVAL $daysdration DAY)),
-                            y2 = YEAR(DATE_ADD(CONCAT(y1, '-', m1, '-', d1), INTERVAL $daysdration DAY))
-                        WHERE id = '$id'";
-                        mysqli_query($conn2, $sqls);
-
-                        
-                        ?>
-                        <td><b><?php echo $daysdration; ?></b> 
-                        <?php if (mysqli_affected_rows($conn2) > 0) { ?>
-                            ✅
-                        <?php } else { ?>
-                            ❌
-                        <?php } ?>
-                        </td><?php
-                        header("Refresh: 5; url=" . $url . "event/fixdurations/auto");
-                    }else{ ?>
-                        <td><input style="max-width:100px" class="form-control mb-3" type="number" name="newDuration" placeholder="<?php echo $days_diff; ?>" value="<?php echo $days_diff; ?>"></td>
-
-                        <td><b><span role="button" class="btn btn-secondary px-5 newDuration"><?php echo $daysdration;  ?></span></b></td>
-                        <td><button class="btn btn-primary float-right justify-content-end save" data-id="<?php echo $daysdration; ?>">Save</button></td><?php
-                    }
-                    ?></tr><?php
-                }
-                ?>
+                
                 </tbody>
                 </table>
             </div>
-            <?php } ?>
+            
         </div>
     </div>
 </div>
-<script>
-    $(document).ready(function() {
-        $('.save').click(function() {
+<script>$(document).ready(function() {
+    <?php if($auto){ ?>
+    // auto next in 5 seconds
+    var timerSeconds = 10; // Initial countdown time in seconds
+    var countdownTimer;
+
+    function updateTimer() {
+        // Update the timer element with the current countdown value
+        $('#timer-seconds').text(timerSeconds);
+        // Update the stroke-dashoffset to create the visual countdown effect
+        var dashOffset = (timerSeconds / 10) * 565; // 565 is the circumference of the circle
+        $('#timer-progress').css('stroke-dashoffset', dashOffset);
+    }
+
+    function startTimer() {
+        // Show the initial timer
+        updateTimer();
+
+        // Start the countdown
+        countdownTimer = setInterval(function () {
+            timerSeconds--;
+
+            if (timerSeconds <= 0) {
+                // When the countdown reaches 0, reload the DataTable and reset the timer
+                table1.ajax.reload();
+                timerSeconds = 10; // Reset the countdown time
+                updateTimer();
+            } else {
+                // Update the timer during the countdown
+                updateTimer();
+            }
+        }, 1000); // Update every 1000 milliseconds (1 second)
+    }
+
+    // Start the timer when the document is ready
+    $(document).ready(function () {
+        startTimer();
+
+        // DataTable drawCallback
+        table1.on('draw.dt', function () {
+            // Check the total records in the DataTable
+            var totalRecords = table1.page.info().recordsTotal;
+
+            if (totalRecords === 0) {
+                // Hide the timer and clear the interval if there are no rows
+                clearInterval(countdownTimer);
+                $('#timer-container').hide();
+            }
+        });
+    });
+
+<?php } ?>
+    
+        $(document).on('click', '.save',function() {
             let currentDuration = $(this).closest('tr').find('input[name="currentDuration"]').val();
             let id = $(this).closest('tr').find('input[name="id"]').val();
             let newDuration = $(this).closest('tr').find('input[name="newDuration"]').val();
@@ -136,13 +125,13 @@
                 $.ajax({
                     type: "POST",
                     url: "updateDuration", 
-                    data: data,
+                    data: {
+                        id: id,
+                        newDuration: newDuration-1,
+                    },
                     success: function (response) {
-                        console.log(response);
                         if (response == "success") {
-                            $(this).closest('tr').find('input[name="currentDuration"]').val($(this).text().trim());
-                            $(this).closest('tr').find('.form-control.newDuration').val($(this).text().trim());
-                            $(this).remove();
+                            table1.ajax.reload(null, false); 
                         } else {
                             alert("Failed to delete the row.");
                         }
@@ -154,13 +143,13 @@
             }
         });
 
-        $('.newDuration').click(function() {
+        $(document).on('click', '.newDuration',function() {
             let currentDuration = $(this).closest('tr').find('input[name="currentDuration"]').val();
             let id = $(this).closest('tr').find('input[name="id"]').val();
             let newDuration = $(this).text();
             var data = {
                 id: id,
-                newDuration: newDuration,
+                newDuration: newDuration-1,
             };
             
             var confirmation = confirm('Are you sure you want to change Duration for Event id ('+id+') from ('+currentDuration+') days to be ('+newDuration+') days?');
@@ -171,7 +160,7 @@
                     data: data,
                     success: function (response) {
                         if (response == "success") {
-                            $(this).closest('tr').remove();
+                            table1.ajax.reload(null, false); 
                         } else {
                             alert("Failed to delete the row.");
                         }
@@ -182,14 +171,34 @@
                 });
             }
         });
-        
-        var table1 = $('#example').DataTable({ 
-            buttons: ['copy', 'excel', 'pdf', 'print'],
-            pageLength: 10,
-            lengthMenu: [[10, 25, 50, 100, 200, 500, -1], [10, 25, 50, 100, 200, 500, "All"]]
-            
-        });
 
-        table1.buttons().container().appendTo('#example_wrapper .col-md-6:eq(0)');
+        
+var table1 = $('#example').DataTable({
+        buttons: ['copy', 'excel', 'pdf', 'print'],
+        serverSide: true, // Enable server-side processing
+        processing: true, // Show processing indicator
+        ajax: {
+            url: '<?php echo $url; ?>tables/event/fixdurationtable.php<?php echo $auto ? '?auto=true' : '';?>', // URL to your server-side script
+            type: 'POST',
+            data: function (d) {
+                // Include additional parameters if needed
+                d.start = d.start || 0;
+                d.length = d.length || 10;
+            }
+        },
+        columns: [
+            { data: 'id' },
+            { data: 'start' },
+            { data: 'end' },
+            { data: 'weeks' },
+            { data: 'duration' },
+            <?php if(!$auto){ ?>   
+            { data: 'standard'},
+            { data: 'save'},
+            <?php } ?> 
+        ],
+        pageLength: 10,
+        lengthMenu: [[10, 25, 50, 100, 200, 500, -1], [10, 25, 50, 100, 200, 500, 'All']]
     });
+});
 </script>

@@ -94,7 +94,7 @@ $ajaxview= true;
             $fieldTitles = ['c_id' => 'Course ID' ,'course_c' => 'Category', 'sub_title' => 'Sub Title', 'sh' => 'Short', 'created_at' => 'Created', 'updated_at' => 'Updated' , 'published_at' => 'Publish'];
             $dateColumns = ['created_at', 'updated_at','published_at']; // replace with your actual date columns
             // $urlslug = '';
-            $imagePaths = [];
+            $imagePaths = ['image' => $courseimgurl];
             
             break;
         case "mercury english":
@@ -109,7 +109,7 @@ $ajaxview= true;
             $fieldTitles = ['c_id' => 'Course ID' ,'course_c' => 'Category', 'sub_title' => 'Sub Title', 'sh' => 'Short', 'created_at' => 'Created', 'updated_at' => 'Updated' , 'published_at' => 'Publish'];
             $dateColumns = ['created_at', 'updated_at','published_at']; // replace with your actual date columns
             // $urlslug = '';
-            $imagePaths = [];
+            $imagePaths = ['image' => $courseimgurl];
             
             break;
         case "mercury-training":
@@ -192,6 +192,7 @@ $ajaxview= true;
         </div>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
+    <a href="javascript:history.back()" class="btn btn-primary">Back to Previous Page</a>
     <?php
 
 }

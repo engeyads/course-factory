@@ -6483,7 +6483,8 @@
 			}
 	
 			if ( type == 'alert' ) {
-				alert( msg );
+				// alert( msg );
+				error_noti("Failed to trash the row.");
 			}
 			else if ( type == 'throw' ) {
 				throw new Error(msg);
