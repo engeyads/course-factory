@@ -1,13 +1,18 @@
-<h1 align="center"><a href="https://mercuryt.mercury-training.com" target="_blank" style="font-size: 84px; color: black;"><img src="assets/images/logo-icon.png" width="30" alt="course Factory Logo">COURSE-FACTORY</a></h1>
-<p align="center">Developed with ❤️ by Iyad Sammour fullstack WEB developer using</p>
-<p align="center"><a href="https://php.net" target="_blank"><img src="core-php-ecommerce.webp" width="400" alt="php core Logo"></a></p>
+# Course Factory
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Course Factory is an innovative e-learning platform developed in PHP. It aims to provide users with a seamless online learning experience, featuring a variety of essential tools and functionalities.
 
-## About Course Factory
+## Key Features
+- **Course Management:** Effortlessly create, update, and manage courses to ensure an organized learning environment.
+- **Rich Text Editing:** Utilizes **TinyMCE** for a user-friendly editing experience, allowing course creators to enrich their content easily.
+- **Google API Integration:** Leverages Google APIs to enhance functionality and user experience.
 
+## Technology Stack
+- **Backend:** PHP
+- **Frontend:** HTML, CSS, JavaScript
+- **Database:** MySQL
+
+## Project Status
+The project is currently in active development, with continuous updates and feature additions based on user feedback and technological advances.
+
+Last updated on: 2026-04-02 21:25:09 UTC
